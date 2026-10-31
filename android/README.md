@@ -75,7 +75,7 @@ See the [manager workflow report](../reports/2026-10-27-manager-workflow.md) for
 
 
 
-Compile `src/org/tqmods/*.java` with Android API 36 android.jar. `tests/ModStoreTest.java` runs on a host JDK; optionally pass an author-downloaded LootPlus ARZ path. Checks valid standalone/wrapped imports, real specimen, path traversal, duplicate case variants, multiple ARZ files, disallowed native-code payloads, bad headers and failed-import rollback. Embedded LootPlus activation has device evidence; storage-provider failures and low-space behavior still need device tests.
+Compile `src/org/tqmods/*.java` with Android API 36 android.jar. `tests/SevenZipTest.java` converts the 7z fixtures in `tests/fixtures/7z` (synthetic content packed with 7-Zip in several modes) and compares every file by SHA-256; it also checks refusals (encrypted, BZip2), damaged and truncated input, import of the result and duplicate detection. Extra .7z paths on the command line are converted and timed. `tests/ModStoreTest.java` runs on a host JDK; optionally pass an author-downloaded LootPlus ARZ path. Checks valid standalone/wrapped imports, real specimen, path traversal, duplicate case variants, multiple ARZ files, disallowed native-code payloads, bad headers and failed-import rollback. Embedded LootPlus activation has device evidence; storage-provider failures and low-space behavior still need device tests.
 
 
 

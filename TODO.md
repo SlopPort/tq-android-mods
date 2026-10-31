@@ -5,13 +5,15 @@ Updated: 2026-10-31. Goal: a mod loader that a non-technical player can use: add
 ## Roadmap
 
 1. **Google Play copy.** Test the Magisk route on an unmodified store installation, and the app's own root actions (status, launch, Perf switch, backup, restore) with root granted on the phone.
-2. **7z/RAR import** on the phone (many mods ship as 7z). A public-domain LZMA decoder is a candidate.
+2. **RAR import** (7z is done in 1.1). The official unRAR source may not be used to build a RAR-compatible archiver, and clean-room decoders need a licence review first.
 3. **Content-mod coverage.** Check new-character mastery selection with Masteries, LootPlus drops after the generic path, Halloween gameplay, and records the engine caches before character selection.
 4. **Custom worlds.** Turn the single-level navigation rebuild into a bounded load-time step; then generalize the Gladiators adapter to other recognized maps.
 5. **Several mods at once** with a clear conflict report (record and resource overlaps).
 6. **Waiting indicator in game** while a mod activates, instead of explaining only after the game was stopped.
 7. **Perf pause-menu labels** regression.
 8. Rename/describe mods in the list, show disk usage, delete a mod's character copy on request.
+
+Done on 2026-10-31 (1.1): 7z import on the phone, duplicate-import detection, list keeps its place after actions ([report](reports/2026-10-31-7z-import.md)). 1.0.1: restore fix.
 
 Done on 2026-10-31: Magisk module and separate app, release 1.0 (reports/2026-10-31-magisk-route.md); generic content mods without an allowlist, any character in a mod's copy, activation on a fast LoadGame, automatic first-start save copy, one-button restart, simplified bilingual manager, skipping loose PC extras on import, mod removal. See reports/2026-10-31-generic-content-mods.md.
 

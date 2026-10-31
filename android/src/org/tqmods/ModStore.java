@@ -14,7 +14,12 @@ public final class ModStore {
         if (!this.root.isDirectory() && !this.root.mkdirs()) throw new IOException("Cannot create mod storage");
     }
     public static final class UnsupportedArchive extends IOException {
-        UnsupportedArchive() { super("7z or RAR archive"); }
+        UnsupportedArchive() { super("RAR archive"); }
+    }
+    /** Files a mod import keeps; loose PC install extras (textures, readmes, images) are not used here. */
+    public static boolean keeps(String path) {
+        String lower = path.toLowerCase(Locale.ROOT);
+        return lower.endsWith(".arz") || lower.endsWith(".arc") || lower.endsWith(".map") || lower.endsWith(".txt") || lower.endsWith(".md");
     }
     public static final class VariantRequired extends IOException {
         public final String[] variants;
@@ -26,7 +31,7 @@ public final class ModStore {
     public synchronized File importFile(InputStream source, String displayName, String variant) throws IOException {
         String name = displayName == null ? "" : displayName.toLowerCase(Locale.ROOT);
         if (!name.endsWith(".zip") && !name.endsWith(".arz")) throw new IOException("Choose a ZIP or ARZ file");
-        // Many PC mods ship as 7z or RAR even when renamed; report that plainly.
+        // A RAR (or a 7z renamed to .zip) cannot be read as ZIP; report that plainly.
         source = new BufferedInputStream(source, 1 << 16);
         source.mark(8); byte[] magic = new byte[4]; int got = source.read(magic); source.reset();
         if (got == 4 && ((magic[0] == '7' && magic[1] == 'z' && (magic[2] & 0xff) == 0xbc)
@@ -62,8 +67,7 @@ public final class ModStore {
                         if (entry.isDirectory()) continue;
                         String lower = path.toLowerCase(Locale.ROOT);
                         if (isProgram(lower)) throw new IOException("Unsupported file in archive: " + path);
-                        // Loose PC install extras (textures, readmes, images) are not used here.
-                        if (!(lower.endsWith(".arz") || lower.endsWith(".arc") || lower.endsWith(".map") || lower.endsWith(".txt") || lower.endsWith(".md"))) {
+                        if (!keeps(lower)) {
                             zip.closeEntry(); continue;
                         }
                         copy(zip, dest, budget);
@@ -123,6 +127,41 @@ public final class ModStore {
         if (variant == null) return base;
         String last = variant.substring(variant.lastIndexOf('/') + 1).replace('_', ' ').trim();
         return last.equalsIgnoreCase(base) ? base : base + " (" + last + ")";
+    }
+    /** Another entry with exactly the same files, or null. Re-adding a mod must not split its character copy. */
+    public synchronized File duplicateOf(File added) throws IOException {
+        String mine = null;
+        for (File other : installed()) {
+            if (other.getCanonicalFile().equals(added.getCanonicalFile())) continue;
+            if (mine == null) mine = fingerprint(added);
+            if (mine.equals(fingerprint(other))) return other;
+        }
+        return null;
+    }
+    static String fingerprint(File entry) throws IOException {
+        TreeMap<String, File> files = new TreeMap<>();
+        list(entry.getCanonicalFile(), entry.getCanonicalFile(), files);
+        try {
+            java.security.MessageDigest all = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] buffer = new byte[65536];
+            for (Map.Entry<String, File> e : files.entrySet()) {
+                all.update(e.getKey().getBytes("UTF-8")); all.update((byte) 0);
+                try (InputStream in = new FileInputStream(e.getValue())) { for (int n; (n = in.read(buffer)) > 0; ) all.update(buffer, 0, n); }
+                all.update((byte) 0);
+            }
+            StringBuilder hex = new StringBuilder();
+            for (byte b : all.digest()) hex.append(String.format("%02x", b & 0xff));
+            return hex.toString();
+        } catch (java.security.NoSuchAlgorithmException e) { throw new IOException(e); }
+    }
+    private static void list(File dir, File entry, TreeMap<String, File> found) throws IOException {
+        File[] files = dir.listFiles();
+        if (files == null) throw new IOException("Cannot inspect mod");
+        for (File f : files) {
+            if (f.isDirectory()) list(f, entry, found);
+            else if (!(dir.equals(entry) && f.getName().startsWith("."))) // .title, .kind: the app's own notes
+                found.put(entry.toPath().relativize(f.toPath()).toString().replace('\\', '/').toLowerCase(Locale.ROOT), f);
+        }
     }
     /** Removes one imported library entry and nothing outside it. */
     public synchronized void remove(File directory) throws IOException {

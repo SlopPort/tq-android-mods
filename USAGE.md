@@ -4,9 +4,9 @@ You need a 64-bit phone with root (Magisk) and Titan Quest installed (game build
 
 ## Install (once)
 
-1. Open the [Releases page](https://github.com/SlopPort/tq-android-mods/releases/latest), scroll to **Assets** and download `tq-mods-magisk-1.0.zip` and `titan-quest-mods-1.0.1.apk`.
+1. Open the [Releases page](https://github.com/SlopPort/tq-android-mods/releases/latest), scroll to **Assets** and download `tq-mods-magisk-1.0.zip` and `titan-quest-mods-1.1.apk`.
 2. Open **Magisk** → **Modules** → **Install from storage** → choose `tq-mods-magisk-1.0.zip`. When it finishes, tap **Reboot**. In Magisk the module is called **Titan Quest Mods loader**.
-3. Open your Downloads and tap `titan-quest-mods-1.0.1.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
+3. Open your Downloads and tap `titan-quest-mods-1.1.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
 4. Open **Titan Quest Mods** and tap **Allow root access** (*Zezwól na dostęp roota*). A Magisk window (*Superuser Request*) appears with a countdown and two buttons: tap **Grant** (*Zezwól*) before the countdown runs out.
 
 If the Magisk window closed by itself, Magisk remembers that as a refusal. Open **Magisk** → **Superuser**, switch on **Titan Quest Mods**, then tap **Allow root access** in the app again.
@@ -19,8 +19,8 @@ TQ Android Perf and TQ Traders are not needed and not included. Already using th
 
 ## Play a mod
 
-1. Download a mod for the PC game on your phone, from its author's page. Mods usually come as a ZIP file and land in **Downloads**.
-2. Open **Titan Quest Mods** and tap **Add a mod from a file** (*Dodaj mod z pliku*). Pick the ZIP.
+1. Download a mod for the PC game on your phone, from its author's page. Mods come as a ZIP or 7z file and land in **Downloads**.
+2. Open **Titan Quest Mods** and tap **Add a mod from a file** (*Dodaj mod z pliku*). Pick the file. A 7z file is unpacked first; large mods take up to a minute.
 3. If the ZIP has several versions of the mod, the app asks which one to add.
 4. The mod appears in the list and is chosen (gold frame). Tap the green **Play: …** button (*Graj: …*).
 5. The first time, the app copies your characters for this mod. This takes a few seconds and happens once per mod.
@@ -66,7 +66,9 @@ The top of the app shows one sentence about what happened. When the loader stops
 | The character was opened before the mod finished loading | Start again; on the character list, wait a moment before picking a character |
 | The game did not reach the character list in time | Start again and open the character list within a few minutes |
 | The separate character copy for this mod is missing | Start the game with the app's green button, not the game icon |
-| This is a 7z or RAR archive | On a computer, unpack it and pack the folder again as ZIP |
+| This is a RAR archive | On a computer, unpack it and pack the folder again as ZIP |
+| This 7z file cannot be read here | It is password-protected or uses a rare packing method: on a computer, unpack it and pack the folder again as ZIP |
+| This mod is already in the list | Nothing to do: the existing entry is chosen and keeps its characters |
 | This game version is not supported | The loader only knows game build 3.0.5364 |
 | This mod could not be loaded on Android | The mod's files did not load; choose another mod |
 | An unexpected error | Please [report it](https://github.com/SlopPort/tq-android-mods/issues) with the details line shown under the message |

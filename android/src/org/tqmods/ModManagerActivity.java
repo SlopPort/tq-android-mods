@@ -310,7 +310,11 @@ public final class ModManagerActivity extends Activity {
         if (detail != null && !detail.isEmpty()) { TextView d = label(Texts.details() + detail, 11, MUTED, false); d.setPadding(0, dp(6), 0, 0); box.addView(d); }
         root.addView(box, wide(-2, 0, dp(10)));
     }
-    private void say(String s, int color) { message = s; messageColor = color; if (scroll != null) scroll.post(() -> scroll.smoothScrollTo(0, 0)); }
+    private void say(String s, int color) {
+        message = s; messageColor = color;
+        // Show a new message at the top; with no message keep the player's place in the list.
+        if (s != null && scroll != null) scroll.post(() -> scroll.smoothScrollTo(0, 0));
+    }
 
     // ---- Actions -----------------------------------------------------------------------------
     private void onPlay(String selected, String active, boolean running) {
@@ -504,12 +508,17 @@ public final class ModManagerActivity extends Activity {
                     if (cursor != null && cursor.moveToFirst()) name = cursor.getString(0);
                 }
                 String lower = name == null ? "" : name.toLowerCase(java.util.Locale.ROOT);
-                if (lower.endsWith(".7z") || lower.endsWith(".rar")) { finishImport(Texts.archive7z(), WARN, null); return; }
+                if (lower.endsWith(".rar")) { finishImport(Texts.archiveRar(), WARN, null); return; }
                 try (InputStream stream = getContentResolver().openInputStream(uri)) {
                     if (stream == null) throw new IOException("Cannot open selected file");
                     pending = ImportSnapshot.create(new File(getCacheDir(), "mod-inputs"), stream, name);
                 }
+                if (pending.is7z()) {
+                    runOnUiThread(() -> { message = Texts.unpacking7z(); messageColor = MUTED; if (!isDestroyed()) render(); });
+                    pending = pending.unpack7z(ModStore::keeps);
+                }
                 importPending(null);
+            } catch (SevenZip.Unsupported e) { finishImport(Texts.unsupported7z(e.getMessage()), WARN, null);
             } catch (Exception e) { finishImport(Texts.importFailed(e.getMessage()), ERROR, null); }
         });
     }
@@ -518,10 +527,13 @@ public final class ModManagerActivity extends Activity {
         try {
             File added;
             try (InputStream stream = pending.open()) { added = store.importFile(stream, pending.name, variant); }
+            File known = store.duplicateOf(added);
+            if (known != null) { store.remove(added); added = known; } // Keep the existing entry and its character copy.
             boolean playable = ModKind.playable(ModKind.of(store, added));
-            finishImport(playable ? Texts.importedChosen(ModStore.title(added)) : Texts.imported(ModStore.title(added)), GREEN, playable ? added.getName() : null);
+            String title = ModStore.title(added);
+            finishImport(known != null ? Texts.alreadyAdded(title) : playable ? Texts.importedChosen(title) : Texts.imported(title), GREEN, playable ? added.getName() : null);
         } catch (ModStore.UnsupportedArchive archive) {
-            finishImport(Texts.archive7z(), WARN, null);
+            finishImport(Texts.archiveRar(), WARN, null);
         } catch (ModStore.VariantRequired choice) {
             String[] labels = new String[choice.variants.length];
             for (int i = 0; i < labels.length; i++) labels[i] = choice.variants[i].substring(choice.variants[i].lastIndexOf('/') + 1).replace('_', ' ');

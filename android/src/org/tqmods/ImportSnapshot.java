@@ -22,6 +22,18 @@ public final class ImportSnapshot implements Closeable {
             ok=true; return new ImportSnapshot(file,name);
         } finally { if(!ok && file.exists() && !file.delete()) file.deleteOnExit(); }
     }
+    public boolean is7z() throws IOException { return SevenZip.is7z(file); }
+    /** Unpacks a 7z input into a ZIP snapshot next to it and removes this one. */
+    public ImportSnapshot unpack7z(SevenZip.Filter wanted) throws IOException {
+        File zip=File.createTempFile("mod-", ".input", file.getParentFile());
+        boolean ok=false;
+        try {
+            try(OutputStream out=new BufferedOutputStream(new FileOutputStream(zip), 65536)) { SevenZip.toZip(file, out, wanted); }
+            String base=name==null ? "mod" : name.replaceFirst("(?i)\\.(7z|zip)$", "");
+            ok=true; close();
+            return new ImportSnapshot(zip, base + ".zip");
+        } finally { if(!ok && zip.exists() && !zip.delete()) zip.deleteOnExit(); }
+    }
     public InputStream open() throws IOException { return new FileInputStream(file); }
     public void close() throws IOException {
         if(file.exists() && !file.delete()) throw new IOException("Cannot remove temporary import copy");

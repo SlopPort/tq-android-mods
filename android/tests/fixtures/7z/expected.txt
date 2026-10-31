@@ -1,0 +1,5 @@
+b2b9645386d689313fc65b9ef0e50ef5cc66a3760910a5bdef4fef56628215ce  MyMod/Readme.txt
+d1f58f46ac53e02e504faabbf951cd0797e6af9479f0e1e1b4bddcb4d1b87965  MyMod/database/MyMod.arz
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  MyMod/docs/empty.txt
+3dedd7404fff66d5fa0527b6d8f9bd9ed0e5007b9a4140f594c3cadd2c0f99be  MyMod/resources/Items.arc
+c59d3c0480cc2d71d8f646e735e92da65450311eec46e81a5db8c7e6e8a92054  MyMod/Ünïcode name/Text.txt

@@ -34,7 +34,7 @@ classes.mkdir(); dex.mkdir()
 shutil.copyfile(android, a.out / 'android.jar')
 android = a.out / 'android.jar'
 manifest = a.out / 'AndroidManifest.xml'
-package, label, version, code = (('org.tqmods.manager', 'Titan Quest Mods', '1.0.1', 2) if a.manager
+package, label, version, code = (('org.tqmods.manager', 'Titan Quest Mods', '1.1', 3) if a.manager
                                  else ('org.tqmods.importtest', 'TQ Mods Import Test', '0.1', 1))
 icon = ' android:icon="@drawable/icon"' if a.manager else ''
 manifest.write_text(f'''<manifest xmlns:android="http://schemas.android.com/apk/res/android"

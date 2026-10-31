@@ -17,8 +17,8 @@ final class Texts {
     static String restartWith(String name) { return t("Restart the game with: ", "Uruchom grę ponownie z: ") + name; }
     static String chooseHeader() { return t("What do you want to play?", "W co chcesz grać?"); }
     static String addMod() { return t("+  Add a mod from a file", "+  Dodaj mod z pliku"); }
-    static String addHint() { return t("Download a mod (usually a ZIP file) on this phone, then tap the button above and pick it. Downloaded files are usually in the Downloads folder.",
-        "Pobierz mod (zwykle plik ZIP) na ten telefon, potem naciśnij przycisk powyżej i wybierz go. Pobrane pliki są zwykle w folderze „Pobrane”."); }
+    static String addHint() { return t("Download a mod (a ZIP or 7z file) on this phone, then tap the button above and pick it. Downloaded files are usually in the Downloads folder.",
+        "Pobierz mod (plik ZIP lub 7z) na ten telefon, potem naciśnij przycisk powyżej i wybierz go. Pobrane pliki są zwykle w folderze „Pobrane”."); }
     static String howItWorks() { return t("How it works", "Jak to działa"); }
     static String steps() { return t("1. Add a mod from a file.\n2. Tap it to choose it.\n3. Tap Play.\n\nEach mod has its own copy of your characters, so your normal saves stay safe.",
         "1. Dodaj mod z pliku.\n2. Stuknij go, żeby go wybrać.\n3. Naciśnij Graj.\n\nKażdy mod ma własną kopię Twoich postaci, więc zwykłe zapisy są bezpieczne."); }
@@ -54,8 +54,13 @@ final class Texts {
     static String importing() { return t("Adding the mod…", "Dodaję mod…"); }
     static String imported(String name) { return t("Added: ", "Dodano: ") + name + t(". Tap it to choose it.", ". Stuknij go, żeby go wybrać."); }
     static String importedChosen(String name) { return t("Added and chosen: ", "Dodano i wybrano: ") + name + t(". Tap Play.", ". Naciśnij Graj."); }
-    static String archive7z() { return t("This is a 7z or RAR archive. The app reads ZIP files: on a computer, unpack it and pack the folder again as ZIP.",
-        "To archiwum 7z lub RAR. Aplikacja czyta pliki ZIP: na komputerze rozpakuj je i spakuj folder ponownie jako ZIP."); }
+    static String alreadyAdded(String name) { return t("This mod is already in the list: ", "Ten mod już jest na liście: ") + name
+        + t(". It is chosen; your characters for it are kept.", ". Został wybrany; Twoje postacie dla niego zostają."); }
+    static String archiveRar() { return t("This is a RAR archive. The app reads ZIP and 7z files: on a computer, unpack it and pack the folder again as ZIP.",
+        "To archiwum RAR. Aplikacja czyta pliki ZIP i 7z: na komputerze rozpakuj je i spakuj folder ponownie jako ZIP."); }
+    static String unpacking7z() { return t("Unpacking the 7z file. Large mods take up to a minute…", "Rozpakowuję plik 7z. Duże mody trwają do minuty…"); }
+    static String unsupported7z(String what) { return t("This 7z file cannot be read here (" + what + "). On a computer, unpack it and pack the folder again as ZIP.",
+        "Tego pliku 7z nie da się tu odczytać (" + what + "). Na komputerze rozpakuj go i spakuj folder ponownie jako ZIP."); }
     static String importFailed(String why) { return t("Could not add this file: ", "Nie udało się dodać pliku: ") + why; }
     static String chooseVariant() { return t("This file has several versions. Which one?", "Ten plik zawiera kilka wersji. Którą dodać?"); }
     static String preparingSaves() { return t("Preparing a separate copy of your characters for this mod. This happens only once…",
