@@ -1,0 +1,80 @@
+[
+  {
+    "name": "_ZNK4GAME6Entity9GetRegionEv",
+    "rva": "0x8607f4",
+    "size": 20,
+    "fnv1a": "58a303c4"
+  },
+  {
+    "name": "_ZNK4GAME5World19GetNumLevelsLoadingEv",
+    "rva": "0x8a2a18",
+    "size": 72,
+    "fnv1a": "537d5288"
+  },
+  {
+    "name": "_ZNK4GAME14PathMeshRecast13IsInitializedEv",
+    "rva": "0x8ccd9c",
+    "size": 16,
+    "fnv1a": "14d12fe9"
+  },
+  {
+    "name": "_ZNK4GAME6Region8GetLevelEb",
+    "rva": "0x8d90b4",
+    "size": 76,
+    "fnv1a": "53e6ef7a"
+  },
+  {
+    "name": "_ZN4GAME6Region8GetWorldEv",
+    "rva": "0x8db71c",
+    "size": 8,
+    "fnv1a": "aec50216"
+  },
+  {
+    "name": "_ZNK4GAME5Level17GetPostLoadCalledEv",
+    "rva": "0x8ee7cc",
+    "size": 8,
+    "fnv1a": "a6e459e4"
+  },
+  {
+    "name": "_ZN4GAME5Level17GetPathMeshRecastEv",
+    "rva": "0x8eecf8",
+    "size": 12,
+    "fnv1a": "19c0652c"
+  },
+  {
+    "name": "_ZNK4GAME5Level9GetRegionEv",
+    "rva": "0x8ef2d8",
+    "size": 8,
+    "fnv1a": "010c4d0e"
+  },
+  {
+    "name": "_ZN4GAME5Level14CreatePathMeshEv",
+    "rva": "0x8ef46c",
+    "size": 932,
+    "fnv1a": "683c92db"
+  },
+  {
+    "name": "_ZNK4GAME5Level8IsLoadedEv",
+    "rva": "0x8efa58",
+    "size": 8,
+    "fnv1a": "f3dfa78b"
+  },
+  {
+    "name": "_ZNK4GAME10GameEngine13GetMainPlayerEv",
+    "rva": "0x9fdfdc",
+    "size": 88,
+    "fnv1a": "40f1cc12"
+  },
+  {
+    "name": "_ZN4GAME11UIPlayerHud12WidgetUpdateEi",
+    "rva": "0xc5eaa4",
+    "size": 3632,
+    "fnv1a": "dd264e25"
+  },
+  {
+    "name": "_ZN4GAME15GetMainThreadIdEv",
+    "rva": "0xd538b0",
+    "size": 16,
+    "fnv1a": "d98ac6c1"
+  }
+]

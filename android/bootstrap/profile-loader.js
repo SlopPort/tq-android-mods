@@ -45,6 +45,7 @@ rpc.exports.init = function(stage, parameters) {
       const groups=[parameters.expectedApi];
       if(profile)groups.push(parameters.saveApi,parameters.cloudApi);
       if(isMap||isContent)groups.push(parameters.mapApi);
+      if(isMap&&parameters.navApi)groups.push(parameters.navApi);
       const gate=tqPreflightNativeApi(engine,groups.map(g=>g.map(a=>({...a,rva:Number(a.rva)}))));
       report.apiPreflight={status:'matched',count:gate.count};
       const E=n=>engine.getExportByName(n);
@@ -67,6 +68,8 @@ rpc.exports.init = function(stage, parameters) {
         if(isMap){
           report.menuProbe.map=tqActivateGladiatorsMap(engine,archive,player,mapConfig,gate,r=>{report.menuProbe.map=r;write();});
           if(report.menuProbe.map.status!=='map-ready')throw Error('Map setup incomplete');
+          // The map has no navigation data: build it per level once the player is in the world.
+          if(parameters.navApi)held.push(tqInstallMapNavigation(engine,gate,r=>{report.menuProbe.navigation=r;write();}));
           report.modsActivated=true;
         }else if(isContent){
           report.menuProbe.content=tqActivateGenericMod(engine,archive,player,selection.plan,gate,r=>{report.menuProbe.content=r;write();});

@@ -17,7 +17,7 @@ FILES = ['module.prop', 'customize.sh', 'service.sh', 'tqmods.sh', 'action.sh', 
 # Order matters: helpers first, the orchestrator (which sets rpc.exports.init) last.
 SCRIPTS = ['resolve-selection.js', 'lab-database-probe.js', 'plan-save-path.js', 'resolve-save-profile.js',
            'magisk-request.js', 'preflight-native-api.js', 'save-profile-runtime.js', 'local-only-cloud.js',
-           'observe-engine-startup.js', 'gladiators-map-runtime.js', 'generic-mod-runtime.js', 'profile-loader.js']
+           'observe-engine-startup.js', 'gladiators-map-runtime.js', 'map-navigation-runtime.js', 'generic-mod-runtime.js', 'profile-loader.js']
 GAME = '/data/user/0/com.hg.titanquestultimate/files'
 ALIAS = '/data/data/com.hg.titanquestultimate/files'
 
@@ -32,7 +32,7 @@ def loader():
         'liveSaveRoot': '/storage/emulated/0/Android/data/com.hg.titanquestultimate/files/Preferences/SaveData/',
     }
     for key, name in [('expectedApi', 'api-5364.json'), ('saveApi', 'save-profile-api-5364.json'),
-                      ('cloudApi', 'cloud-policy-api-5364.json'), ('mapApi', 'map-api-5364.json'),
+                      ('cloudApi', 'cloud-policy-api-5364.json'), ('mapApi', 'map-api-5364.json'), ('navApi', 'nav-api-5364.json'),
                       ('gladiators', 'gladiators-runtime-5364.json')]:
         params[key] = json.loads((BOOT / name).read_text(encoding='utf-8'))
     params['profiles'] = (json.loads((BOOT / 'profiles-5364.json').read_text(encoding='utf-8'))
@@ -53,7 +53,7 @@ def loader():
 
 ap = argparse.ArgumentParser()
 ap.add_argument('--injector', help='existing frida-inject binary for android-arm64')
-ap.add_argument('--out', default=str(HERE.parent / 'dist' / 'tq-mods-magisk-1.1.zip'))
+ap.add_argument('--out', default=str(HERE.parent / 'dist' / 'tq-mods-magisk-1.2.zip'))
 a = ap.parse_args()
 inj = pathlib.Path(a.injector).read_bytes() if a.injector else lzma.decompress(urllib.request.urlopen(URL).read())
 out = pathlib.Path(a.out)
