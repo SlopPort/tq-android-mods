@@ -1,2 +1,5 @@
 magisk/module/** text eol=lf
 *.sh text eol=lf
+android/tests/fixtures/7z/*.7z binary
+android/tests/fixtures/7z/expected.txt text eol=lf
+android/tests/fixtures/7z/SHA256SUMS text eol=lf

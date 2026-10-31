@@ -22,6 +22,8 @@ node_modules/
 *.tex
 *.tar
 *.7z
+# Synthetic test archives (tools/make-7z-fixtures.py); the publication guard checks their hashes.
+!android/tests/fixtures/7z/*.7z
 *.rar
 __pycache__/
 build/
