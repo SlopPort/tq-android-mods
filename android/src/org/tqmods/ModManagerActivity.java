@@ -469,12 +469,13 @@ public final class ModManagerActivity extends Activity {
                 background(() -> {
                     String report;
                     try {
-                        List<java.util.Set<String>> records = new ArrayList<>();
-                        for (File dir : chosen) records.add(Combos.records(store.database(dir)));
+                        List<java.util.Set<String>> records = new ArrayList<>(), files = new ArrayList<>();
+                        for (File dir : chosen) { records.add(Combos.records(store.database(dir))); files.add(Combos.resourceFiles(store.resources(dir))); }
                         StringBuilder text = new StringBuilder(Texts.comboOrder(ModStore.title(chosen.get(0))));
-                        List<int[]> rows = Combos.conflicts(records);
-                        if (rows.isEmpty()) text.append("\n\n").append(Texts.noConflicts());
+                        List<int[]> rows = Combos.conflicts(records), shared = Combos.conflicts(files);
+                        if (rows.isEmpty() && shared.isEmpty()) text.append("\n\n").append(Texts.noConflicts());
                         for (int[] r : rows) text.append("\n\n").append(Texts.conflict(ModStore.title(chosen.get(r[0])), ModStore.title(chosen.get(r[1])), r[2]));
+                        for (int[] r : shared) text.append("\n\n").append(Texts.fileConflict(ModStore.title(chosen.get(r[0])), ModStore.title(chosen.get(r[1])), r[2]));
                         report = text.toString();
                     } catch (IOException e) { done(e.getMessage(), ERROR); return; }
                     final String message = report;

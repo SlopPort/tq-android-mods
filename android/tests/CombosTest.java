@@ -20,6 +20,21 @@ public final class CombosTest {
         try (OutputStream out = new FileOutputStream(f)) { out.write(head.array()); table.writeTo(out); strings.writeTo(out); }
         return f;
     }
+    /** Minimal ARC: 28-byte header, names right after it (no parts), 44-byte entries at the end. */
+    static File arc(File dir, String name, String... files) throws IOException {
+        ByteArrayOutputStream names = new ByteArrayOutputStream(), table = new ByteArrayOutputStream();
+        for (String f : files) {
+            byte[] b = f.getBytes(StandardCharsets.ISO_8859_1);
+            ByteBuffer e = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN);
+            e.putInt(12, 1).putInt(36, b.length).putInt(40, names.size());
+            table.write(e.array()); names.write(b); names.write(0);
+        }
+        ByteBuffer head = ByteBuffer.allocate(28).order(ByteOrder.LITTLE_ENDIAN);
+        head.put((byte) 'A').put((byte) 'R').put((byte) 'C').put((byte) 0).putInt(3).putInt(files.length).putInt(0).putInt(0).putInt(0).putInt(28);
+        File f = new File(dir, name);
+        try (OutputStream out = new FileOutputStream(f)) { out.write(head.array()); names.writeTo(out); table.writeTo(out); }
+        return f;
+    }
     static byte[] le(int v) { return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(v).array(); }
 
     public static void main(String[] args) throws Exception {
@@ -35,6 +50,13 @@ public final class CombosTest {
         byte[] cut = Arrays.copyOf(Files.readAllBytes(new File(tmp, "a.arz").toPath()), 40);
         File damaged = new File(tmp, "cut.arz"); Files.write(damaged.toPath(), cut);
         try { Combos.records(damaged); throw new AssertionError("Accepted damaged ARZ"); } catch (IOException expected) { }
+
+        File ra = new File(tmp, "ra"), rb = new File(tmp, "rb"); ra.mkdirs(); rb.mkdirs();
+        Set<String> fa = Combos.resourceFiles(new File[] {arc(ra, "InGameUI.arc", "Skills\\Icon.tex", "only_a.tex"), arc(ra, "Text.arc", "modstrings.txt")});
+        Set<String> fb = Combos.resourceFiles(new File[] {arc(rb, "INGAMEUI.ARC", "skills/icon.tex"), arc(rb, "Text.arc", "ModStrings.txt"), arc(rb, "Other.arc", "only_a.tex")});
+        if (!fa.contains("ingameui/skills/icon.tex") || fa.contains("text/modstrings.txt")) throw new AssertionError("Resource names: " + fa);
+        List<int[]> fileRows = Combos.conflicts(Arrays.asList(fa, fb));
+        if (fileRows.size() != 1 || fileRows.get(0)[2] != 1) throw new AssertionError("Shared files: " + fb);
 
         Combos store = new Combos(new File(tmp, "combos"));
         String m1 = UUID.randomUUID().toString(), m2 = UUID.randomUUID().toString();
@@ -52,6 +74,6 @@ public final class CombosTest {
             for (String p : args) real.add(Combos.records(new File(p)));
             for (int[] r : Combos.conflicts(real)) System.out.println(args[r[0]] + " + " + args[r[1]] + ": " + r[2] + " shared records");
         }
-        System.out.println("PASS: combination storage and reuse, ARZ record names, conflict counts, damaged ARZ refused");
+        System.out.println("PASS: combination storage and reuse, ARZ record names, conflict counts, shared archive files, damaged ARZ refused");
     }
 }

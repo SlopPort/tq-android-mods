@@ -78,7 +78,20 @@ public final class Combos {
         } catch (IndexOutOfBoundsException | NegativeArraySizeException damaged) { throw new IOException("Damaged ARZ"); }
     }
 
-    /** One line per pair of mods that change the same records: {earlier, later, count}. */
+    /** Files the mod's archives put into the game, as "archive/inner path" in lower case. Each mod's
+     *  Text/modstrings.txt is left out: the loader reads it per mod, so it never hides another one. */
+    public static Set<String> resourceFiles(File[] arcs) throws IOException {
+        Set<String> files = new HashSet<>();
+        for (File arc : arcs) {
+            String name = arc.getName().toLowerCase(Locale.ROOT);
+            String archive = name.endsWith(".arc") ? name.substring(0, name.length() - 4) : name;
+            for (String inner : ModStore.arcEntries(arc).keySet())
+                if (!(archive.equals("text") && inner.equals("modstrings.txt"))) files.add(archive + "/" + inner);
+        }
+        return files;
+    }
+
+    /** One line per pair of mods that change the same records (or files): {earlier, later, count}. */
     public static List<int[]> conflicts(List<Set<String>> records) {
         List<int[]> rows = new ArrayList<>();
         for (int i = 0; i < records.size(); i++)

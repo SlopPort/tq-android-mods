@@ -217,6 +217,12 @@ public final class ModStore {
     }
     static List<Long> arcMapSizes(File arc) throws IOException {
         List<Long> sizes = new ArrayList<>();
+        for (Map.Entry<String, Long> e : arcEntries(arc).entrySet()) if (e.getKey().endsWith(".map")) sizes.add(e.getValue());
+        return sizes;
+    }
+    /** File names inside an ARC (lower case, forward slashes) and their sizes. */
+    public static Map<String, Long> arcEntries(File arc) throws IOException {
+        Map<String, Long> entries = new LinkedHashMap<>();
         try (RandomAccessFile file = new RandomAccessFile(arc, "r")) {
             long length = file.length();
             if (length < 28 || length > Integer.MAX_VALUE) throw new IOException("Damaged ARC file " + arc.getName());
@@ -234,10 +240,10 @@ public final class ModStore {
                 if (nameLength < 0 || nameLength > 1024 || nameOffset < 0 || names + nameOffset + nameLength > records)
                     throw new IOException("Damaged ARC file " + arc.getName());
                 byte[] name = new byte[nameLength]; file.seek(names + nameOffset); file.readFully(name);
-                if (new String(name, "ISO-8859-1").toLowerCase(Locale.ROOT).endsWith(".map")) sizes.add(size);
+                entries.put(new String(name, "ISO-8859-1").toLowerCase(Locale.ROOT).replace('\\', '/'), size);
             }
         }
-        return sizes;
+        return entries;
     }
     private static void keepSelected(File dir, File selected) throws IOException {
         File[] children = dir.listFiles();

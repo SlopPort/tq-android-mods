@@ -83,7 +83,9 @@ final class Texts {
     static String comboTitle(int n) { return t(n + " mods together", n + " mody razem"); }
     static String comboOrder(String first) { return t("If mods change the same thing, the one ticked first wins: " + first + ".",
         "Jeśli mody zmieniają to samo, wygrywa zaznaczony wcześniej: " + first + "."); }
-    static String noConflicts() { return t("These mods do not change the same game records.", "Te mody nie zmieniają tych samych rekordów gry."); }
+    static String noConflicts() { return t("These mods do not change the same game records or files.", "Te mody nie zmieniają tych samych rekordów ani plików gry."); }
+    static String fileConflict(String a, String b, int n) { return t(a + " and " + b + " both bring " + n + " of the same files (graphics, sounds, texts, maps); " + a + "'s files are used.",
+        a + " i " + b + " mają te same pliki (" + n + ": grafika, dźwięki, teksty, mapy); użyte zostaną pliki z: " + a + "."); }
     static String conflict(String a, String b, int n) { return t(a + " and " + b + " both change " + n + " game records; " + a + "'s version is used.",
         a + " i " + b + " zmieniają te same rekordy gry (" + n + "); użyta zostanie wersja z: " + a + "."); }
     static String createCombo() { return t("Create", "Utwórz"); }
