@@ -30,7 +30,7 @@ Done on 2026-10-31: Magisk module and separate app, release 1.0 (reports/2026-10
 The old checklist was written for the repacked-APK and rootless-Gadget routes, which the Magisk route (1.0) replaced; its full text is in the git history. Reviewed 2026-10-31; what still applies:
 
 - **XMAX variants:** x2 tested 2026-10-31: no effect on the phone (90 monsters with and without it), because the game reads its game-engine record at startup, before mods are activated ([report](reports/2026-10-31-xmax-x2.md)). The other variants change the same record, so they need early activation first.
-- **Early activation (new, blocks XMAX and mod skill icons):** activate mods before the engine reads its startup records (game engine, skill and mastery tables). Investigate when the loader can mount a mod database safely at startup, and what that means for saved characters.
+- **Early activation:** investigated 2026-11-01 ([report](reports/2026-11-01-early-activation.md)). Activating before startup is not possible (the loader is injected after the engine reads its records). A targeted refresh after activation works without a crash: hide only the cached tables of records the mod overrides, then re-read (`GameEngine::LoadFromDatabase` for the engine record; `GameEngine::Reload` crashes). Next: (a) a field merge for PC records that lack mobile fields, needed before XMAX can be applied (x2 as published zeroes the inventory bag sizes); (b) try the targeted refresh for Masteries skill tables to fix the icons, checking saved characters keep their masteries.
 - **Masteries + LootPlus field-resolution proposal:** still a plan, not compiled or tested.
 - **Audio cache:** playback and combat regression test, deferred by the user.
 - **Robustness on the phone:**
