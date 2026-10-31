@@ -7,8 +7,8 @@ Updated: 2026-10-31. Goal: a mod loader that a non-technical player can use: add
 1. **RAR import** (7z is done in 1.1). The official unRAR source may not be used to build a RAR-compatible archiver, and clean-room decoders need a licence review first.
 2. **Content-mod coverage.** New-character mastery selection with Masteries works; its skill icons are blank because the mobile skill panel never requests mod icon files ([report](reports/2026-10-31-masteries-coverage.md)): find where skill icons are resolved. Still to check: LootPlus drops after the generic path, Halloween gameplay, and records the engine caches before character selection.
 3. **Custom worlds.** Gladiators is walkable since module 1.2 (navigation built per area, [report](reports/2026-10-31-map-navigation.md)). Next: generalize the Gladiators adapter (map path, sentinel records, text tags) to other maps; this needs more map files from their authors to test with. Check enemies and quests inside a map once a map with them is available.
-4. **Several mods at once:** done for content mods (1.4). Still open: report overlapping resource files (textures, sounds) as well as records, and combinations that include a custom map.
-5. **Perf pause-menu labels** regression.
+4. **Several mods at once:** done for content mods (1.4); the set dialog also lists files two mods both ship inside same-named archives (first-ticked mod's file is used). Still open: combinations that include a custom map.
+5. **Perf pause-menu labels:** not reproduced with the Magisk route (2026-10-31: tq_mods + LootPlus, overlay button visible, all pause-menu labels readable). The [2026-10-29 report](reports/2026-10-29-pause-menu-investigation.md) covered the old repacked-APK setup.
 6. Rename/describe mods in the list.
 
 Done on 2026-10-31 (1.5, module 1.4): delete a mod's or set's character copy from its card (module `deleteprofile`, refused while the game runs; `status` lists existing copies). Checked on the phone: only the chosen copy deleted, a fresh copy made on the next start, originals unchanged.
