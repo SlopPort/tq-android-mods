@@ -62,6 +62,8 @@ rpc.exports.init = function(stage, parameters) {
         if(!player.isNull())throw Error('Activation requires menu without player');
         if(archive.isNull())return false;
         done=true;
+        // The game stands still while a mod activates; the app tells the player.
+        if(selection.status!=='vanilla'){report.status='activating';write();}
         if(isMap){
           report.menuProbe.map=tqActivateGladiatorsMap(engine,archive,player,mapConfig,gate,r=>{report.menuProbe.map=r;write();});
           if(report.menuProbe.map.status!=='map-ready')throw Error('Map setup incomplete');

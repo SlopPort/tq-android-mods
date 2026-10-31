@@ -24,6 +24,8 @@ public final class ModManagerActivity extends Activity {
     static final int BG = 0xff15120e, CARD = 0xff241f18, CARD_ON = 0xff3a2f1c, GOLD = 0xffd9a441,
         TEXT = 0xfff2ebdd, MUTED = 0xffb5a991, GREEN = 0xff3e8e41, WARN = 0xffe0a030, ERROR = 0xffe06a50;
     private final ExecutorService io = Executors.newSingleThreadExecutor();
+    private static final int ASK_NOTIFICATIONS = 7;
+    private boolean restartAfterAsking;
     private final android.os.Handler ui = new android.os.Handler(android.os.Looper.getMainLooper());
     private ModStore store;
     private ImportSnapshot pending;
@@ -334,8 +336,15 @@ public final class ModManagerActivity extends Activity {
     private void startGame(boolean restart) {
         if (!embedded) {
             // The module copies the mod into the game, makes the character copy once and starts the game.
-            if (restart) rootTask(null, "launch", getFilesDir().getPath(), "restart");
-            else rootTask(null, "launch", getFilesDir().getPath());
+            String id = selectedId();
+            // Android hides the loading message (even toasts) without this permission; ask before the game covers the dialog.
+            if (id != null && askNotifications()) { restartAfterAsking = restart; return; }
+            if (id != null) GameWatch.start(this, name(id));
+            background(() -> {
+                try { RootLink.run(restart ? new String[] {"launch", getFilesDir().getPath(), "restart"} : new String[] {"launch", getFilesDir().getPath()}); done(null, GREEN); }
+                catch (Exception error) { GameWatch.stop(this); done(Texts.startFailed(error.getMessage()), ERROR); }
+                refresh();
+            });
             return;
         }
         Intent game = new Intent(); game.setClassName(getPackageName(), "org.tqmods.GameBootstrapActivity");
@@ -344,6 +353,20 @@ public final class ModManagerActivity extends Activity {
         try { startActivity(game); } catch (Exception error) { say(Texts.startFailed(error.getMessage()), ERROR); render(); return; }
         // The engine cannot be unloaded: end this process so Android starts the game afresh.
         if (restart) Runtime.getRuntime().exit(0);
+    }
+    /** Android 13+ asks once; returns true while the question is open (the game starts after the answer). */
+    private boolean askNotifications() {
+        if (android.os.Build.VERSION.SDK_INT < 33) return false;
+        if (checkSelfPermission("android.permission.POST_NOTIFICATIONS") == android.content.pm.PackageManager.PERMISSION_GRANTED) return false;
+        File asked = new File(getFilesDir(), "notifications-asked");
+        if (asked.exists()) return false;
+        try { asked.createNewFile(); } catch (IOException ignored) { }
+        requestPermissions(new String[] {"android.permission.POST_NOTIFICATIONS"}, ASK_NOTIFICATIONS);
+        return true;
+    }
+    public void onRequestPermissionsResult(int code, String[] permissions, int[] results) {
+        super.onRequestPermissionsResult(code, permissions, results);
+        if (code == ASK_NOTIFICATIONS && !isBusy()) startGame(restartAfterAsking);
     }
     private void pinShortcut() {
         android.content.pm.ShortcutManager shortcuts = getSystemService(android.content.pm.ShortcutManager.class);

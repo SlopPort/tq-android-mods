@@ -4,9 +4,9 @@ You need a 64-bit phone with root (Magisk) and Titan Quest installed (game build
 
 ## Install (once)
 
-1. Open the [Releases page](https://github.com/SlopPort/tq-android-mods/releases/latest), scroll to **Assets** and download `tq-mods-magisk-1.0.zip` and `titan-quest-mods-1.2.apk`.
-2. Open **Magisk** → **Modules** → **Install from storage** → choose `tq-mods-magisk-1.0.zip`. When it finishes, tap **Reboot**. In Magisk the module is called **Titan Quest Mods loader**.
-3. Open your Downloads and tap `titan-quest-mods-1.2.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
+1. Open the [Releases page](https://github.com/SlopPort/tq-android-mods/releases/latest), scroll to **Assets** and download `tq-mods-magisk-1.1.zip` and `titan-quest-mods-1.3.apk`.
+2. Open **Magisk** → **Modules** → **Install from storage** → choose `tq-mods-magisk-1.1.zip`. When it finishes, tap **Reboot**. In Magisk the module is called **Titan Quest Mods loader**.
+3. Open your Downloads and tap `titan-quest-mods-1.3.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
 4. Open **Titan Quest Mods** and tap **Allow root access** (*Zezwól na dostęp roota*). A Magisk window (*Superuser Request*) appears with a countdown and two buttons: tap **Grant** (*Zezwól*) before the countdown runs out.
 
 If the Magisk window closed by itself, Magisk remembers that as a refusal. Open **Magisk** → **Superuser**, switch on **Titan Quest Mods**, then tap **Allow root access** in the app again.
@@ -24,7 +24,9 @@ TQ Android Perf and TQ Traders are not needed and not included. Already using th
 3. If the ZIP has several versions of the mod, the app asks which one to add.
 4. The mod appears in the list and is chosen (gold frame). Tap the green **Play: …** button (*Graj: …*).
 5. The first time, the app copies your characters for this mod. This takes a few seconds and happens once per mod.
-6. In the game, wait a few seconds in the main menu, then tap **Start game** and pick a character as usual.
+6. In the game, wait a few seconds in the main menu, then tap **Start game**. The mod loads now and the game stands still for a few seconds; a message at the bottom says "Loading the mod…" and then "Mod ready. Choose your character." Pick a character as usual.
+
+   The first time you tap Play, Android asks whether Titan Quest Mods may send notifications. Allow it: without it Android also hides these messages over the game. You can change it later in Android settings → Apps → Titan Quest Mods → Notifications.
 
 Your original characters are not used by mods. Progress made with a mod stays with that mod, even if you remove the mod and add the same file again later. Each mod in the list shows how much space it uses on the phone.
 
@@ -58,7 +60,7 @@ The top of the app shows one sentence about what happened. When the loader stops
 
 | Message | What to do |
 | --- | --- |
-| The Titan Quest Mods loader module is not installed | Install `tq-mods-magisk-1.0.zip` in Magisk and reboot |
+| The Titan Quest Mods loader module is not installed | Install `tq-mods-magisk-1.1.zip` in Magisk and reboot |
 | Root access was refused | Open Magisk → Superuser, switch on Titan Quest Mods, tap **Allow root access** again |
 | Titan Quest is not installed on this phone | Install the game, or update the Magisk module to the latest release |
 | Mods are paused: update … | Update TQ Android Perf or TQ Traders, then reboot |

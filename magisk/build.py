@@ -53,7 +53,7 @@ def loader():
 
 ap = argparse.ArgumentParser()
 ap.add_argument('--injector', help='existing frida-inject binary for android-arm64')
-ap.add_argument('--out', default=str(HERE.parent / 'dist' / 'tq-mods-magisk-1.0.zip'))
+ap.add_argument('--out', default=str(HERE.parent / 'dist' / 'tq-mods-magisk-1.1.zip'))
 a = ap.parse_args()
 inj = pathlib.Path(a.injector).read_bytes() if a.injector else lzma.decompress(urllib.request.urlopen(URL).read())
 out = pathlib.Path(a.out)

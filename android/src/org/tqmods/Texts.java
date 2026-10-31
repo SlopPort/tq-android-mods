@@ -73,6 +73,12 @@ final class Texts {
     static String preparingSaves() { return t("Preparing a separate copy of your characters for this mod. This happens only once…",
         "Przygotowuję osobną kopię Twoich postaci dla tego moda. To dzieje się tylko raz…"); }
     static String starting() { return t("Starting the game…", "Uruchamiam grę…"); }
+    static String watchChannel() { return t("Mod loading", "Ładowanie moda"); }
+    static String watchMenu() { return t("The mod loads when you open the character list. The game then stands still for about 10 seconds; please wait.",
+        "Mod załaduje się po otwarciu listy postaci. Gra stanie wtedy na około 10 sekund – poczekaj."); }
+    static String watchLoading() { return t("Loading the mod… The game stands still for a few seconds. Please wait.",
+        "Ładuję mod… Gra stoi przez kilka sekund. Poczekaj."); }
+    static String watchReady() { return t("Mod ready. Choose your character.", "Mod gotowy. Wybierz postać."); }
     static String startFailed(String why) { return t("The game could not start: ", "Nie udało się uruchomić gry: ") + why; }
     static String stateRunningVanilla() { return t("The game is running without mods.", "Gra działa bez modów."); }
     static String stateRunning(String name) { return t("The game is running with: ", "Gra działa z modem: ") + name; }

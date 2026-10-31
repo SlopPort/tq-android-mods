@@ -34,19 +34,25 @@ classes.mkdir(); dex.mkdir()
 shutil.copyfile(android, a.out / 'android.jar')
 android = a.out / 'android.jar'
 manifest = a.out / 'AndroidManifest.xml'
-package, label, version, code = (('org.tqmods.manager', 'Titan Quest Mods', '1.2', 4) if a.manager
+package, label, version, code = (('org.tqmods.manager', 'Titan Quest Mods', '1.3', 5) if a.manager
                                  else ('org.tqmods.importtest', 'TQ Mods Import Test', '0.1', 1))
 icon = ' android:icon="@drawable/icon"' if a.manager else ''
 manifest.write_text(f'''<manifest xmlns:android="http://schemas.android.com/apk/res/android"
  package="{package}" android:versionCode="{code}" android:versionName="{version}">
  <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="36"/>
  <queries><package android:name="com.hg.titanquestultimate"/></queries>
+ <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+ <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+ <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
  <application android:label="{label}"{icon} android:allowBackup="false"
  android:theme="@android:style/Theme.Material.NoActionBar">
  <activity android:name="org.tqmods.ModManagerActivity" android:exported="true">
  <intent-filter><action android:name="android.intent.action.MAIN"/>
  <category android:name="android.intent.category.LAUNCHER"/></intent-filter>
- </activity></application></manifest>''', encoding='utf-8')
+ </activity>
+ <service android:name="org.tqmods.GameWatch" android:exported="false" android:foregroundServiceType="specialUse">
+ <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="Shows mod loading progress while the game starts"/>
+ </service></application></manifest>''', encoding='utf-8')
 def run(*cmd):
     result = subprocess.run([str(x) for x in cmd], check=True, capture_output=True, text=True)
     if result.stdout: print(result.stdout, end='')

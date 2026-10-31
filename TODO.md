@@ -8,9 +8,10 @@ Updated: 2026-10-31. Goal: a mod loader that a non-technical player can use: add
 2. **Content-mod coverage.** New-character mastery selection with Masteries works; its skill icons are blank because the mobile skill panel never requests mod icon files ([report](reports/2026-10-31-masteries-coverage.md)): find where skill icons are resolved. Still to check: LootPlus drops after the generic path, Halloween gameplay, and records the engine caches before character selection.
 3. **Custom worlds.** Turn the single-level navigation rebuild into a bounded load-time step; then generalize the Gladiators adapter to other recognized maps.
 4. **Several mods at once** with a clear conflict report (record and resource overlaps).
-5. **Waiting indicator in game** while a mod activates, instead of explaining only after the game was stopped.
-6. **Perf pause-menu labels** regression.
-7. Rename/describe mods in the list, delete a mod's character copy on request (needs a module update).
+5. **Perf pause-menu labels** regression.
+6. Rename/describe mods in the list, delete a mod's character copy on request (needs a module update).
+
+Done on 2026-10-31 (1.3, module 1.1): a message over the game while a mod loads and when it is ready (notification and toast from the app; the loader reports an `activating` state).
 
 Done on 2026-10-31 (1.2): a removed mod added again gets its characters back; size shown per mod.
 
