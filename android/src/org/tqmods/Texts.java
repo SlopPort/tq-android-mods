@@ -56,6 +56,13 @@ final class Texts {
     static String importedChosen(String name) { return t("Added and chosen: ", "Dodano i wybrano: ") + name + t(". Tap Play.", ". Naciśnij Graj."); }
     static String alreadyAdded(String name) { return t("This mod is already in the list: ", "Ten mod już jest na liście: ") + name
         + t(". It is chosen; your characters for it are kept.", ". Został wybrany; Twoje postacie dla niego zostają."); }
+    static String addedBack(String name) { return t("Added again: ", "Dodano ponownie: ") + name
+        + t(". Your characters for it are back. Tap Play.", ". Twoje postacie dla niego wróciły. Naciśnij Graj."); }
+    static String size(long bytes) {
+        double mb = bytes / (1024.0 * 1024.0);
+        String n = mb < 10 ? String.format(java.util.Locale.ROOT, "%.1f", mb) : String.valueOf(Math.round(mb));
+        return t("(" + n + " MB on the phone)", "(" + n.replace('.', ',') + " MB w telefonie)");
+    }
     static String archiveRar() { return t("This is a RAR archive. The app reads ZIP and 7z files: on a computer, unpack it and pack the folder again as ZIP.",
         "To archiwum RAR. Aplikacja czyta pliki ZIP i 7z: na komputerze rozpakuj je i spakuj folder ponownie jako ZIP."); }
     static String unpacking7z() { return t("Unpacking the 7z file. Large mods take up to a minute…", "Rozpakowuję plik 7z. Duże mody trwają do minuty…"); }

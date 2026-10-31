@@ -10,7 +10,9 @@ Updated: 2026-10-31. Goal: a mod loader that a non-technical player can use: add
 4. **Several mods at once** with a clear conflict report (record and resource overlaps).
 5. **Waiting indicator in game** while a mod activates, instead of explaining only after the game was stopped.
 6. **Perf pause-menu labels** regression.
-7. Rename/describe mods in the list, show disk usage, delete a mod's character copy on request.
+7. Rename/describe mods in the list, delete a mod's character copy on request (needs a module update).
+
+Done on 2026-10-31 (1.2): a removed mod added again gets its characters back; size shown per mod.
 
 Done on 2026-10-31 (1.1): 7z import on the phone, duplicate-import detection, list keeps its place after actions ([report](reports/2026-10-31-7z-import.md)). 1.0.1: restore fix.
 

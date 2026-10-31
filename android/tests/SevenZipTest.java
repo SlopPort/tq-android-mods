@@ -88,6 +88,15 @@ public final class SevenZipTest {
         SevenZip.toZip(new File(dir, "lzma2-random.7z"), changed, p -> true);
         File different = store.importFile(new ByteArrayInputStream(changed.toByteArray()), "Other.zip");
         if (store.duplicateOf(different) != null) throw new AssertionError("Different mod taken as duplicate");
+        // Removed by the player, then added again: the old id (and so the character copy) comes back.
+        store.remove(again);
+        String oldId = added.getName();
+        store.retire(added);
+        File readded = store.reclaim(store.importFile(new ByteArrayInputStream(other.toByteArray()), "MyMod.zip"));
+        if (!readded.getName().equals(oldId)) throw new AssertionError("Re-added mod got a new id");
+        File fresh = store.importFile(new ByteArrayInputStream(zip.toByteArray()), "Copy.zip");
+        if (store.reclaim(fresh) != fresh) throw new AssertionError("Id handed out twice");
+        if (ModStore.size(readded) < 2_600_000) throw new AssertionError("Size too small");
         // Optional real archives passed on the command line: report time and file count.
         for (int i = 1; i < args.length; i++) {
             long t = System.nanoTime();

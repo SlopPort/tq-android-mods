@@ -4,9 +4,9 @@ You need a 64-bit phone with root (Magisk) and Titan Quest installed (game build
 
 ## Install (once)
 
-1. Open the [Releases page](https://github.com/SlopPort/tq-android-mods/releases/latest), scroll to **Assets** and download `tq-mods-magisk-1.0.zip` and `titan-quest-mods-1.1.apk`.
+1. Open the [Releases page](https://github.com/SlopPort/tq-android-mods/releases/latest), scroll to **Assets** and download `tq-mods-magisk-1.0.zip` and `titan-quest-mods-1.2.apk`.
 2. Open **Magisk** → **Modules** → **Install from storage** → choose `tq-mods-magisk-1.0.zip`. When it finishes, tap **Reboot**. In Magisk the module is called **Titan Quest Mods loader**.
-3. Open your Downloads and tap `titan-quest-mods-1.1.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
+3. Open your Downloads and tap `titan-quest-mods-1.2.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
 4. Open **Titan Quest Mods** and tap **Allow root access** (*Zezwól na dostęp roota*). A Magisk window (*Superuser Request*) appears with a countdown and two buttons: tap **Grant** (*Zezwól*) before the countdown runs out.
 
 If the Magisk window closed by itself, Magisk remembers that as a refusal. Open **Magisk** → **Superuser**, switch on **Titan Quest Mods**, then tap **Allow root access** in the app again.
@@ -26,7 +26,7 @@ TQ Android Perf and TQ Traders are not needed and not included. Already using th
 5. The first time, the app copies your characters for this mod. This takes a few seconds and happens once per mod.
 6. In the game, wait a few seconds in the main menu, then tap **Start game** and pick a character as usual.
 
-Your original characters are not used by mods. Progress made with a mod stays with that mod.
+Your original characters are not used by mods. Progress made with a mod stays with that mod, even if you remove the mod and add the same file again later. Each mod in the list shows how much space it uses on the phone.
 
 After changing your choice, start the game with the app's green button. The game's own icon starts whatever you played last.
 
@@ -69,6 +69,7 @@ The top of the app shows one sentence about what happened. When the loader stops
 | This is a RAR archive | On a computer, unpack it and pack the folder again as ZIP |
 | This 7z file cannot be read here | It is password-protected or uses a rare packing method: on a computer, unpack it and pack the folder again as ZIP |
 | This mod is already in the list | Nothing to do: the existing entry is chosen and keeps its characters |
+| Added again: … Your characters for it are back | Nothing to do: this mod was removed earlier and its characters are used again |
 | This game version is not supported | The loader only knows game build 3.0.5364 |
 | This mod could not be loaded on Android | The mod's files did not load; choose another mod |
 | An unexpected error | Please [report it](https://github.com/SlopPort/tq-android-mods/issues) with the details line shown under the message |

@@ -163,6 +163,41 @@ public final class ModStore {
                 found.put(entry.toPath().relativize(f.toPath()).toString().replace('\\', '/').toLowerCase(Locale.ROOT), f);
         }
     }
+    /** Removes an entry the player chose to remove, remembering its files so that adding
+     *  the same mod again gets the same id back, and with it the mod's character copy. */
+    public synchronized void retire(File directory) throws IOException {
+        File entry = directory.getCanonicalFile();
+        File notes = new File(root, ".removed");
+        if (!notes.isDirectory() && !notes.mkdirs()) throw new IOException("Cannot record removed mod");
+        try (Writer w = new OutputStreamWriter(new FileOutputStream(new File(notes, entry.getName())), "UTF-8")) { w.write(fingerprint(entry)); }
+        remove(entry);
+    }
+    /** A new entry identical to a removed one takes back the removed one's id. */
+    public synchronized File reclaim(File added) throws IOException {
+        File[] notes = new File(root, ".removed").listFiles();
+        if (notes == null) return added;
+        String mine = null;
+        for (File note : notes) {
+            String id = note.getName();
+            if (!id.matches("[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}") || new File(root, id).exists()) continue;
+            String theirs;
+            try (BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(note), "UTF-8"))) { theirs = r.readLine(); }
+            if (mine == null) mine = fingerprint(added);
+            if (!mine.equals(theirs)) continue;
+            File back = new File(root, id);
+            if (!added.getCanonicalFile().renameTo(back)) return added;
+            note.delete();
+            return back;
+        }
+        return added;
+    }
+    /** Bytes used by one library entry. */
+    public static long size(File entry) {
+        long total = 0;
+        File[] files = entry.listFiles();
+        if (files != null) for (File f : files) total += f.isDirectory() ? size(f) : f.length();
+        return total;
+    }
     /** Removes one imported library entry and nothing outside it. */
     public synchronized void remove(File directory) throws IOException {
         File entry = directory.getCanonicalFile();

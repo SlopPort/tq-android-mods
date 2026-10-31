@@ -181,7 +181,7 @@ public final class ModManagerActivity extends Activity {
             String badge = kind.equals(ModKind.MAP) ? Texts.badgeMap()
                 : kind.equals(ModKind.TESTED) || kind.equals(ModKind.MAP_SUPPORTED) ? Texts.badgeTested() : Texts.badgeExperimental();
             String hint = kind.equals(ModKind.MAP) ? Texts.hintMap() : kind.equals(ModKind.MAP_SUPPORTED) ? Texts.hintMapSupported() : Texts.hintContent();
-            modCard(dir.getName(), ModStore.title(dir), hint, badge, dir.getName().equals(selected), busy);
+            modCard(dir.getName(), ModStore.title(dir), hint + " " + Texts.size(ModStore.size(dir)), badge, dir.getName().equals(selected), busy);
         }
 
         Button add = button(Texts.addMod(), CARD, GOLD, 17);
@@ -367,8 +367,10 @@ public final class ModManagerActivity extends Activity {
             .setNegativeButton(Texts.cancel(), null)
             .setPositiveButton(Texts.remove(), (d, w) -> {
                 boolean wasSelected = id.equals(selectedId());
-                try { store.remove(entry(id)); say(Texts.removed(), MUTED); } catch (IOException e) { say(e.getMessage(), ERROR); }
-                if (wasSelected) select(null); else render();
+                background(() -> {
+                    try { store.retire(entry(id)); done(Texts.removed(), MUTED); } catch (IOException e) { done(e.getMessage(), ERROR); }
+                    if (wasSelected) runOnUiThread(() -> select(null));
+                });
             }).show();
     }
 
@@ -529,9 +531,12 @@ public final class ModManagerActivity extends Activity {
             try (InputStream stream = pending.open()) { added = store.importFile(stream, pending.name, variant); }
             File known = store.duplicateOf(added);
             if (known != null) { store.remove(added); added = known; } // Keep the existing entry and its character copy.
+            File back = known == null ? store.reclaim(added) : added; // Removed earlier: same id, same characters.
+            boolean returned = back != added; added = back;
             boolean playable = ModKind.playable(ModKind.of(store, added));
             String title = ModStore.title(added);
-            finishImport(known != null ? Texts.alreadyAdded(title) : playable ? Texts.importedChosen(title) : Texts.imported(title), GREEN, playable ? added.getName() : null);
+            finishImport(known != null ? Texts.alreadyAdded(title) : returned ? Texts.addedBack(title)
+                : playable ? Texts.importedChosen(title) : Texts.imported(title), GREEN, playable ? added.getName() : null);
         } catch (ModStore.UnsupportedArchive archive) {
             finishImport(Texts.archiveRar(), WARN, null);
         } catch (ModStore.VariantRequired choice) {

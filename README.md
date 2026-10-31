@@ -4,7 +4,7 @@
 
 It is experimental and unofficial. It works on one game build (3.0.5364, 64-bit phones).
 
-**[Download Titan Quest Mods 1.1](https://github.com/SlopPort/tq-android-mods/releases/latest)**: on the Releases page, scroll to **Assets** and download both files: the app (`titan-quest-mods-1.1.apk`) and the Magisk module (`tq-mods-magisk-1.0.zip`).
+**[Download Titan Quest Mods 1.2](https://github.com/SlopPort/tq-android-mods/releases/latest)**: on the Releases page, scroll to **Assets** and download both files: the app (`titan-quest-mods-1.2.apk`) and the Magisk module (`tq-mods-magisk-1.0.zip`).
 
 > **Requirement: a rooted phone (Magisk) and your own copy of the game.**
 > The Android game cannot load mods by itself: its PC mod-loading code is switched off, and it reads no game content from folders you can reach without root ([evidence](reports/2026-10-31-data-only-mods.md)). Mods therefore need a small loader running inside the game. The only ways to put it there without root are to rebuild the game APK or wrap it in a container app, and both mean defeating the publisher's license protection. **We will not do that.** With Magisk, the loader is put into your game while it runs, so your purchased copy, its files and its signature stay as they are.
@@ -15,7 +15,7 @@ It is experimental and unofficial. It works on one game build (3.0.5364, 64-bit 
 
 1. Install Titan Quest as usual.
 2. Open **Magisk** → **Modules** → **Install from storage** → choose `tq-mods-magisk-1.0.zip`. When it finishes, tap **Reboot**.
-3. Open your Downloads and tap `titan-quest-mods-1.1.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
+3. Open your Downloads and tap `titan-quest-mods-1.2.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
 4. Open **Titan Quest Mods** and tap **Allow root access**. A Magisk window (*Superuser Request*) appears with a countdown: tap **Grant** before it runs out. If you missed it, open Magisk → **Superuser**, switch on Titan Quest Mods and tap the button again.
 5. Make a backup of your characters: **Settings and backups** → **Save a backup of my characters**.
 
@@ -45,7 +45,7 @@ After changing your choice, always start the game with the app's green button: t
 
 ### Status
 
-Version 1.1 reads 7z mods directly and recognises a mod that is already in the list ([7z report](reports/2026-10-31-7z-import.md)); 1.0.1 fixed restoring characters from a backup ([test report](reports/2026-10-31-magisk-route.md)). It was tested on one rooted Redmi Note 8 (Android 16) with game build 3.0.5364. Other phones and copies of the game were not tested; [problem reports are welcome](https://github.com/SlopPort/tq-android-mods/issues). This repository never distributes game APKs, game files or mods.
+Version 1.2 keeps a removed mod's characters when the same mod is added again and shows how much space each mod uses. 1.1 reads 7z mods directly and recognises a mod that is already in the list ([7z report](reports/2026-10-31-7z-import.md)); 1.0.1 fixed restoring characters from a backup ([test report](reports/2026-10-31-magisk-route.md)). It was tested on one rooted Redmi Note 8 (Android 16) with game build 3.0.5364. Other phones and copies of the game were not tested; [problem reports are welcome](https://github.com/SlopPort/tq-android-mods/issues). This repository never distributes game APKs, game files or mods.
 
 ## Known issues
 
