@@ -7,7 +7,7 @@ import java.io.*;
 /** One feature choice, frozen into the next startup request. */
 public final class RuntimeFeatures {
     private RuntimeFeatures() {}
-    public static boolean perf(File files) throws Exception {
+    public static synchronized boolean perf(File files) throws Exception {
         AtomicFile file = new AtomicFile(new File(files, "tqmods/features.json"));
         try {
             byte[] data = file.readFully();
@@ -18,7 +18,7 @@ public final class RuntimeFeatures {
             return value.getBoolean("perf");
         } catch (FileNotFoundException absent) { return false; }
     }
-    public static void setPerf(File files, boolean enabled) throws Exception {
+    public static synchronized void setPerf(File files, boolean enabled) throws Exception {
         File directory = new File(files, "tqmods");
         if (!directory.isDirectory() && !directory.mkdirs()) throw new IOException("Cannot save feature settings");
         JSONObject value = new JSONObject(); value.put("schema", 1); value.put("perf", enabled);

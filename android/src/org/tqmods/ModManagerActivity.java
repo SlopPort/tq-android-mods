@@ -103,9 +103,14 @@ public final class ModManagerActivity extends Activity {
         } catch (IOException ignored) { return true; } // Unknown: behave as if the game runs.
         return false;
     }
+    // AtomicFile is not thread-safe: a read during a write discards the half-written file, which
+    // lost a just-made choice when the screen redrew while an import finished (seen after process death).
+    private static final Object REQUEST_LOCK = new Object();
     private String selectedId() {
         try {
-            JSONObject request = new JSONObject(new String(new AtomicFile(new File(getFilesDir(), "tqmods/request.json")).readFully(), "UTF-8"));
+            byte[] bytes;
+            synchronized (REQUEST_LOCK) { bytes = new AtomicFile(new File(getFilesDir(), "tqmods/request.json")).readFully(); }
+            JSONObject request = new JSONObject(new String(bytes, "UTF-8"));
             return request.isNull("id") ? null : request.getString("id");
         } catch (Exception absent) { return null; }
     }
@@ -581,11 +586,13 @@ public final class ModManagerActivity extends Activity {
             request.put("resources", resources);
         }
         AtomicFile file = new AtomicFile(new File(getFilesDir(), target));
-        FileOutputStream stream = null;
-        try {
-            stream = file.startWrite(); stream.write(request.toString().getBytes("UTF-8"));
-            file.finishWrite(stream); stream = null;
-        } finally { if (stream != null) file.failWrite(stream); }
+        synchronized (REQUEST_LOCK) {
+            FileOutputStream stream = null;
+            try {
+                stream = file.startWrite(); stream.write(request.toString().getBytes("UTF-8"));
+                file.finishWrite(stream); stream = null;
+            } finally { if (stream != null) file.failWrite(stream); }
+        }
     }
 
     protected void onActivityResult(int request, int result, Intent data) {
@@ -722,7 +729,7 @@ public final class ModManagerActivity extends Activity {
     private void finishImport(String text, int color, String selectId) {
         if (pending != null) { try { pending.close(); } catch (IOException ignored) { } pending = null; }
         // A newly added playable mod becomes the choice: one less step for the player.
-        if (selectId != null) try { writeSelection(selectId); } catch (Exception ignored) { }
+        if (selectId != null) try { writeSelection(selectId); } catch (Exception e) { android.util.Log.w("tqmods", "selection after import", e); }
         runOnUiThread(() -> { importPending = false; ownsOperation = false; say(text, color); if (!isDestroyed()) render(); });
     }
     protected void onDestroy() {

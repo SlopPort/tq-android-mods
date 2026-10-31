@@ -22,7 +22,7 @@ JNIEXPORT jlong JNICALL Java_org_tqmods_Rar_open(JNIEnv *env, jclass c, jstring 
     return (jlong) (intptr_t) a;
 }
 
-/* Next entry's path, ending in "/" for folders, or null at the end. */
+/* Next entry's path, ending in "/" for folders and anything that is not a plain file, or null at the end. */
 JNIEXPORT jstring JNICALL Java_org_tqmods_Rar_next(JNIEnv *env, jclass c, jlong h) {
     struct archive *a = (struct archive *) (intptr_t) h;
     struct archive_entry *e;
@@ -34,7 +34,8 @@ JNIEXPORT jstring JNICALL Java_org_tqmods_Rar_next(JNIEnv *env, jclass c, jlong 
     if (!name) name = archive_entry_pathname(e);
     if (!name || !*name) { fail(env, "RAR entry without a name"); return NULL; }
     int dir = archive_entry_filetype(e) == AE_IFDIR;
-    if (!dir && archive_entry_filetype(e) != AE_IFREG) { fail(env, "RAR archive contains links or special files"); return NULL; }
+    /* Links and special files are reported like folders, so the importer skips them. */
+    if (archive_entry_filetype(e) != AE_IFREG) dir = 1;
     size_t n = strlen(name);
     char *copy = malloc(n + 2);
     if (!copy) { fail(env, "Out of memory"); return NULL; }

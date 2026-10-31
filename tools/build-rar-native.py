@@ -1,7 +1,9 @@
 """Builds android/lib/arm64-v8a/libtqrar.so: the JNI wrapper plus libarchive's RAR readers.
 
 Usage: python tools/build-rar-native.py --ndk <NDK dir> --libarchive <unpacked libarchive-3.7.7>
-libarchive is BSD-2-Clause (see NOTICE-libarchive.txt); no unRAR code is used."""
+libarchive is BSD-2-Clause (see licenses/libarchive-COPYING.txt); no unRAR code is used.
+One local fix is applied: libarchive 3.7.7's RAR5 reader never checks the CRC/BLAKE2 of stored
+(uncompressed) files, so a corrupted stored file would import silently."""
 import argparse, glob, os, pathlib, subprocess, sys
 p = argparse.ArgumentParser(); p.add_argument('--ndk', required=True); p.add_argument('--libarchive', required=True)
 a = p.parse_args()
@@ -15,10 +17,21 @@ obj = here / 'build/rar-native'; obj.mkdir(parents=True, exist_ok=True)
 flags = ['-O2', '-fPIC', '-ffunction-sections', '-fdata-sections', '-w',
          '-DPLATFORM_CONFIG_H="' + (la / 'contrib/android/config/android.h').as_posix() + '"',
          '-I', str(la / 'libarchive'), '-I', str(la / 'contrib/android/include')]
+RAR5_OLD = ('\tif(rar->file.bytes_remaining == 0 &&\n'
+            '\t\t\trar->cstate.last_write_ptr == rar->file.unpacked_size)\n')
+RAR5_NEW = ('\tif(rar->file.bytes_remaining == 0 &&\n'
+            '\t\t\t(rar->cstate.last_write_ptr == rar->file.unpacked_size ||\n'
+            '\t\t\t ((rar->file.service > 0 || rar->cstate.method == 0) && rar->generic.split_after == 0)))\n')
 objects = []
 for src in sorted(glob.glob(str(la / 'libarchive/*.c'))):
     name = os.path.basename(src)
     if 'windows' in name or name.startswith('test'): continue
+    if name == 'archive_read_support_format_rar5.c':
+        text = pathlib.Path(src).read_text(encoding='utf-8')
+        if text.count(RAR5_OLD) != 1: sys.exit('rar5.c does not match libarchive 3.7.7; check the stored-file CRC fix')
+        src = obj / name
+        src.write_text(text.replace(RAR5_OLD, RAR5_NEW), encoding='utf-8')
+        src = str(src)
     out = obj / (name + '.o')
     if subprocess.run([cc, *flags, '-c', src, '-o', str(out)]).returncode == 0: objects.append(str(out))
     else: print('skipped', name)
