@@ -9,7 +9,7 @@ Updated: 2026-10-31. Goal: a mod loader that a non-technical player can use: add
 3. **Custom worlds.** Gladiators is walkable since module 1.2 (navigation built per area, [report](reports/2026-10-31-map-navigation.md)). Next: generalize the Gladiators adapter (map path, sentinel records, text tags) to other maps; this needs more map files from their authors to test with. Check enemies and quests inside a map once a map with them is available.
 4. **Several mods at once:** done for content mods (1.4); the set dialog also lists files two mods both ship inside same-named archives (first-ticked mod's file is used). Still open: combinations that include a custom map.
 5. **Perf pause-menu labels:** not reproduced with the Magisk route (2026-10-31: tq_mods + LootPlus, overlay button visible, all pause-menu labels readable). The [2026-10-29 report](reports/2026-10-29-pause-menu-investigation.md) covered the old repacked-APK setup.
-6. Rename/describe mods in the list.
+6. ~~Rename/describe mods in the list.~~ Done: "Zmień nazwę i opis" on each card (name up to 60, description up to 300 characters, atomic write); tested on the phone.
 
 Done on 2026-10-31 (1.5, module 1.4): delete a mod's or set's character copy from its card (module `deleteprofile`, refused while the game runs; `status` lists existing copies). Checked on the phone: only the chosen copy deleted, a fresh copy made on the next start, originals unchanged.
 

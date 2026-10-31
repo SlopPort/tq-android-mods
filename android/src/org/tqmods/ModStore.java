@@ -322,6 +322,30 @@ public final class ModStore {
             }
         }
     }
+    /** The player's own description of a mod or set, or "" when there is none. */
+    public static String note(File dir) {
+        try { return new String(java.nio.file.Files.readAllBytes(new File(dir, ".note").toPath()), "UTF-8").trim(); }
+        catch (IOException absent) { return ""; }
+    }
+    public static final int MAX_TITLE = 60, MAX_NOTE = 300;
+    /** Renames a mod or set and stores its description; an empty description removes it. */
+    public static void describe(File dir, String title, String note) throws IOException {
+        String name = title == null ? "" : title.replaceAll("[\\p{Cntrl}]", " ").trim();
+        String text = note == null ? "" : note.replaceAll("[\\p{Cntrl}&&[^\n]]", " ").trim();
+        if (name.isEmpty()) throw new IOException("Name is empty");
+        if (name.length() > MAX_TITLE || text.length() > MAX_NOTE) throw new IOException("Name or description is too long");
+        if (!dir.isDirectory()) throw new IOException("Not installed");
+        writeNote(new File(dir, ".title"), name);
+        File noteFile = new File(dir, ".note");
+        if (text.isEmpty()) { if (noteFile.exists() && !noteFile.delete()) throw new IOException("Cannot save description"); }
+        else writeNote(noteFile, text);
+    }
+    private static void writeNote(File target, String text) throws IOException {
+        File temp = new File(target.getParentFile(), target.getName() + ".new");
+        try (Writer out = new OutputStreamWriter(new FileOutputStream(temp), "UTF-8")) { out.write(text); }
+        try { java.nio.file.Files.move(temp.toPath(), target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING, java.nio.file.StandardCopyOption.ATOMIC_MOVE); }
+        catch (IOException e) { temp.delete(); throw new IOException("Cannot save " + target.getName()); }
+    }
     public static String title(File dir) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(dir, ".title")), "UTF-8"))) {
             String text = reader.readLine();

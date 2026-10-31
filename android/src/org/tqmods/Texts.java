@@ -80,6 +80,11 @@ final class Texts {
     static String combineTitle() { return t("Tick the mods in order of importance", "Zaznacz mody od najważniejszego"); }
     static String combineCount() { return t("Choose 2 to 8 mods.", "Wybierz od 2 do 8 modów."); }
     static String next() { return t("Next", "Dalej"); }
+    static String save() { return t("Save", "Zapisz"); }
+    static String describe() { return t("Rename and describe", "Zmień nazwę i opis"); }
+    static String nameHint() { return t("Name", "Nazwa"); }
+    static String noteHint() { return t("Your description (optional)", "Twój opis (nieobowiązkowy)"); }
+    static String nameEmpty() { return t("The name cannot be empty.", "Nazwa nie może być pusta."); }
     static String comboTitle(int n) { return t(n + " mods together", n + " mody razem"); }
     static String comboOrder(String first) { return t("If mods change the same thing, the one ticked first wins: " + first + ".",
         "Jeśli mody zmieniają to samo, wygrywa zaznaczony wcześniej: " + first + "."); }

@@ -251,8 +251,14 @@ public final class ModManagerActivity extends Activity {
             TextView b = label(badge, 13, map ? ERROR : badge.equals(Texts.badgeTested()) ? GREEN : WARN, true);
             b.setPadding(0, dp(4), 0, 0); card.addView(b);
         }
+        String note = id == null ? "" : ModStore.note(entry(id));
+        if (!note.isEmpty()) { TextView n = label(note, 15, TEXT, false); n.setPadding(0, dp(6), 0, 0); card.addView(n); }
         TextView h = label(hint, 14, MUTED, false); h.setPadding(0, dp(4), 0, 0); card.addView(h);
         if (id != null) {
+            TextView rename = label(Texts.describe(), 14, GOLD, false);
+            rename.setPadding(0, dp(10), dp(12), dp(2));
+            rename.setOnClickListener(v -> { if (!isBusy()) describe(id, title, note); });
+            card.addView(rename, new LinearLayout.LayoutParams(-2, -2));
             TextView remove = label(Texts.remove(), 14, ERROR, false);
             remove.setPadding(0, dp(10), dp(12), dp(2));
             remove.setOnClickListener(v -> { if (!isBusy()) confirmRemove(id, title); });
@@ -451,6 +457,26 @@ public final class ModManagerActivity extends Activity {
             .setPositiveButton(Texts.deleteCharactersYes(), (d, w) -> {
                 if (engineLoaded()) { say(Texts.closeGameFirst(), WARN); render(); return; }
                 rootTask(Texts.charactersDeleted(), "deleteprofile", id);
+            }).show();
+    }
+
+    /** Lets the player give a mod or set their own name and a short description. */
+    private void describe(String id, String title, String note) {
+        LinearLayout form = new LinearLayout(this); form.setOrientation(LinearLayout.VERTICAL);
+        form.setPadding(dp(20), dp(8), dp(20), 0);
+        android.widget.EditText name = new android.widget.EditText(this);
+        name.setSingleLine(true); name.setText(title); name.setHint(Texts.nameHint());
+        name.setFilters(new android.text.InputFilter[] {new android.text.InputFilter.LengthFilter(ModStore.MAX_TITLE)});
+        android.widget.EditText about = new android.widget.EditText(this);
+        about.setText(note); about.setHint(Texts.noteHint()); about.setMinLines(2);
+        about.setFilters(new android.text.InputFilter[] {new android.text.InputFilter.LengthFilter(ModStore.MAX_NOTE)});
+        form.addView(name); form.addView(about);
+        new AlertDialog.Builder(this).setTitle(Texts.describe()).setView(form)
+            .setNegativeButton(Texts.cancel(), null)
+            .setPositiveButton(Texts.save(), (d, w) -> {
+                try { ModStore.describe(entry(id), name.getText().toString(), about.getText().toString()); say(null, MUTED); }
+                catch (IOException e) { say(name.getText().toString().trim().isEmpty() ? Texts.nameEmpty() : e.getMessage(), WARN); }
+                render();
             }).show();
     }
 
