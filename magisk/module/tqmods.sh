@@ -41,6 +41,17 @@ status)
  [ -f "$MODDIR/disable" ] && echo "blocked=The Magisk module is switched off"
  [ -f "$MODDIR/blocked" ] && echo "blocked=$(cat "$MODDIR/blocked")"
  echo "report=$(tr -d '\n' < "$DATA/files/bootstrap-status.json" 2>/dev/null)"
+ # Mods and sets that have their own copy of the characters.
+ p=''; for d in "$TQ"/save-profiles/*; do n=${d##*/}; uuid_ok "$n" && p="$p $n"; done
+ echo "profiles=${p# }"
+ ;;
+deleteprofile)
+ # deleteprofile <id>: delete a mod's copy of the characters; the next start makes a fresh copy.
+ uuid_ok "$2" || fail "bad mod id"
+ running && fail "game is running"
+ [ -d "$TQ/save-profiles/$2" ] || fail "no characters copy for this mod"
+ rm -rf "$TQ/save-profiles/$2" || fail "cannot delete characters copy"
+ echo "ok=1"
  ;;
 launch)
  # launch <app files> [restart]: request-game.json in the app folder holds the choice with game paths.

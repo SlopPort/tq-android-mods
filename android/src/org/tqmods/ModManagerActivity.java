@@ -257,6 +257,12 @@ public final class ModManagerActivity extends Activity {
             remove.setPadding(0, dp(10), dp(12), dp(2));
             remove.setOnClickListener(v -> { if (!isBusy()) confirmRemove(id, title); });
             card.addView(remove, new LinearLayout.LayoutParams(-2, -2));
+            if (hasProfile(id)) {
+                TextView reset = label(Texts.deleteCharacters(), 14, ERROR, false);
+                reset.setPadding(0, dp(10), dp(12), dp(2));
+                reset.setOnClickListener(v -> { if (!isBusy()) confirmDeleteCharacters(id, title); });
+                card.addView(reset, new LinearLayout.LayoutParams(-2, -2));
+            }
         }
         card.setClickable(true);
         card.setOnClickListener(v -> {
@@ -431,6 +437,20 @@ public final class ModManagerActivity extends Activity {
                     } catch (IOException e) { done(e.getMessage(), ERROR); }
                     if (wasSelected) runOnUiThread(() -> select(null));
                 });
+            }).show();
+    }
+
+    /** The module (1.4+) lists the mods that have their own copy of the characters. */
+    private boolean hasProfile(String id) {
+        String list = link == null ? null : link.get("profiles");
+        return list != null && java.util.Arrays.asList(list.trim().split(" ")).contains(id);
+    }
+    private void confirmDeleteCharacters(String id, String title) {
+        new AlertDialog.Builder(this).setTitle(Texts.deleteCharactersTitle(title)).setMessage(Texts.deleteCharactersBody())
+            .setNegativeButton(Texts.cancel(), null)
+            .setPositiveButton(Texts.deleteCharactersYes(), (d, w) -> {
+                if (engineLoaded()) { say(Texts.closeGameFirst(), WARN); render(); return; }
+                rootTask(Texts.charactersDeleted(), "deleteprofile", id);
             }).show();
     }
 

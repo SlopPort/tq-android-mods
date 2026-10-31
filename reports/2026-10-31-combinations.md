@@ -41,3 +41,13 @@ Not checked: Halloween's own items or events during play with the set. Resource 
 - `android/tests/CombinationTest.js`: selection limits, mount order, database order and text registration.
 - `android/tests/CombosTest.java`: set storage and reuse, ARZ record names, conflict counts and damaged ARZ files.
 - `android/tests/ResolveSaveProfileTest.js`: a set has no single database but still needs its prepared character copy.
+
+## Follow-up: delete a character copy (app 1.5, module 1.4)
+
+- **Module:** `status` prints `profiles=<ids>` for the mods and sets that have their own copy of the characters. `deleteprofile <id>` deletes one copy. It refuses a bad id, a missing copy, and any request while the game is running.
+- **App:** a mod or set with a copy shows *Delete this mod's characters*. A confirmation dialog says the progress is deleted for good.
+- **Phone check:**
+  - Deleting the Masteries + Halloween set's copy removed only that folder, and the other 7 copies stayed.
+  - The next Play made a fresh copy of 1,081 files.
+  - While the game ran, `deleteprofile` answered `error=game is running`, and `../x` was refused as a bad id.
+  - The original saves were still byte-identical to the backup.

@@ -110,6 +110,12 @@ final class Texts {
     static String restoreDone() { return t("Characters restored from the backup.", "Postacie przywrócone z kopii."); }
     static String restoreFailed(String why) { return t("Restore failed: ", "Nie udało się przywrócić: ") + why; }
     static String closeGameFirst() { return t("Close the game first (Settings → Close the game), then try again.", "Najpierw zamknij grę (Ustawienia → Zamknij grę), potem spróbuj ponownie."); }
+    static String deleteCharacters() { return t("Delete this mod's characters", "Usuń postacie tego moda"); }
+    static String deleteCharactersTitle(String name) { return t("Delete characters for \"", "Usunąć postacie dla „") + name + t("\"?", "”?"); }
+    static String deleteCharactersBody() { return t("Progress you made with this mod is deleted for good. Your original characters and other mods are not touched. The next start makes a fresh copy of your original characters.",
+        "Postęp zrobiony z tym modem zostanie trwale usunięty. Twoje oryginalne postacie i inne mody nie zmienią się. Przy następnym uruchomieniu powstanie nowa kopia oryginalnych postaci."); }
+    static String deleteCharactersYes() { return t("Delete for good", "Usuń na zawsze"); }
+    static String charactersDeleted() { return t("This mod's characters were deleted.", "Postacie tego moda zostały usunięte."); }
     static String removed() { return t("Mod removed.", "Mod usunięty."); }
     static String unsupportedMap() { return t("Custom maps cannot be played yet. Choose another mod.", "Własnych map nie da się jeszcze grać. Wybierz inny mod."); }
     static String rootIntro() { return t("To start the game with mods, this app needs root access from Magisk. Tap the button below, then tap Grant in the Magisk window before its countdown runs out.",
