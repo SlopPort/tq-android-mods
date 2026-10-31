@@ -17,8 +17,8 @@ final class Texts {
     static String restartWith(String name) { return t("Restart the game with: ", "Uruchom grę ponownie z: ") + name; }
     static String chooseHeader() { return t("What do you want to play?", "W co chcesz grać?"); }
     static String addMod() { return t("+  Add a mod from a file", "+  Dodaj mod z pliku"); }
-    static String addHint() { return t("Download a mod (a ZIP or 7z file) on this phone, then tap the button above and pick it. Downloaded files are usually in the Downloads folder.",
-        "Pobierz mod (plik ZIP lub 7z) na ten telefon, potem naciśnij przycisk powyżej i wybierz go. Pobrane pliki są zwykle w folderze „Pobrane”."); }
+    static String addHint() { return t("Download a mod (a ZIP, 7z or RAR file) on this phone, then tap the button above and pick it. Downloaded files are usually in the Downloads folder.",
+        "Pobierz mod (plik ZIP, 7z lub RAR) na ten telefon, potem naciśnij przycisk powyżej i wybierz go. Pobrane pliki są zwykle w folderze „Pobrane”."); }
     static String howItWorks() { return t("How it works", "Jak to działa"); }
     static String steps() { return t("1. Add a mod from a file.\n2. Tap it to choose it.\n3. Tap Play.\n\nEach mod has its own copy of your characters, so your normal saves stay safe.",
         "1. Dodaj mod z pliku.\n2. Stuknij go, żeby go wybrać.\n3. Naciśnij Graj.\n\nKażdy mod ma własną kopię Twoich postaci, więc zwykłe zapisy są bezpieczne."); }
@@ -63,8 +63,10 @@ final class Texts {
         String n = mb < 10 ? String.format(java.util.Locale.ROOT, "%.1f", mb) : String.valueOf(Math.round(mb));
         return t("(" + n + " MB on the phone)", "(" + n.replace('.', ',') + " MB w telefonie)");
     }
-    static String archiveRar() { return t("This is a RAR archive. The app reads ZIP and 7z files: on a computer, unpack it and pack the folder again as ZIP.",
-        "To archiwum RAR. Aplikacja czyta pliki ZIP i 7z: na komputerze rozpakuj je i spakuj folder ponownie jako ZIP."); }
+    static String archiveRar() { return t("This phone cannot read RAR files (only 64-bit ARM phones can). On a computer, unpack it and pack the folder again as ZIP.",
+        "Ten telefon nie czyta plików RAR (tylko 64-bitowe ARM). Na komputerze rozpakuj je i spakuj folder ponownie jako ZIP."); }
+    static String rarLocked() { return t("This RAR file is password-protected. Unpack it on a computer and pack the folder again as ZIP.", "Ten plik RAR jest chroniony hasłem. Rozpakuj go na komputerze i spakuj folder ponownie jako ZIP."); }
+    static String unpackingRar() { return t("Unpacking the RAR file. Large mods take up to a minute…", "Rozpakowuję plik RAR. Duże mody trwają do minuty…"); }
     static String unpacking7z() { return t("Unpacking the 7z file. Large mods take up to a minute…", "Rozpakowuję plik 7z. Duże mody trwają do minuty…"); }
     static String unsupported7z(String what) { return t("This 7z file cannot be read here (" + what + "). On a computer, unpack it and pack the folder again as ZIP.",
         "Tego pliku 7z nie da się tu odczytać (" + what + "). Na komputerze rozpakuj go i spakuj folder ponownie jako ZIP."); }

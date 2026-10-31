@@ -76,6 +76,9 @@ run(bt / ('aapt' + suffix), 'package', '-f', '-M', manifest, *res, '-I', android
 with zipfile.ZipFile(unsigned, 'a') as z:
     for file in dex.glob('*.dex'):
         z.write(file, file.name)
+    native = root / 'android/lib/arm64-v8a/libtqrar.so'  # tools/build-rar-native.py; without it RAR stays refused
+    if a.manager and native.is_file():
+        z.write(native, 'lib/arm64-v8a/libtqrar.so', compress_type=zipfile.ZIP_DEFLATED)
 aligned = a.out / ('titan-quest-mods-unsigned.apk' if a.manager else 'import-test-unsigned.apk')
 run(bt / ('zipalign' + suffix), '-f', '4', unsigned, aligned)
 run(bt / ('zipalign' + suffix), '-c', '4', aligned)

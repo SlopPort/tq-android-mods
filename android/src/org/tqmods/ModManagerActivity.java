@@ -674,7 +674,6 @@ public final class ModManagerActivity extends Activity {
                     if (cursor != null && cursor.moveToFirst()) name = cursor.getString(0);
                 }
                 String lower = name == null ? "" : name.toLowerCase(java.util.Locale.ROOT);
-                if (lower.endsWith(".rar")) { finishImport(Texts.archiveRar(), WARN, null); return; }
                 try (InputStream stream = getContentResolver().openInputStream(uri)) {
                     if (stream == null) throw new IOException("Cannot open selected file");
                     pending = ImportSnapshot.create(new File(getCacheDir(), "mod-inputs"), stream, name);
@@ -682,8 +681,13 @@ public final class ModManagerActivity extends Activity {
                 if (pending.is7z()) {
                     runOnUiThread(() -> { message = Texts.unpacking7z(); messageColor = MUTED; if (!isDestroyed()) render(); });
                     pending = pending.unpack7z(ModStore::keeps);
+                } else if (pending.isRar()) {
+                    if (!Rar.available()) { finishImport(Texts.archiveRar(), WARN, null); return; }
+                    runOnUiThread(() -> { message = Texts.unpackingRar(); messageColor = MUTED; if (!isDestroyed()) render(); });
+                    pending = pending.unpackRar(ModStore::keeps);
                 }
                 importPending(null);
+            } catch (Rar.Locked e) { finishImport(Texts.rarLocked(), WARN, null);
             } catch (SevenZip.Unsupported e) { finishImport(Texts.unsupported7z(e.getMessage()), WARN, null);
             } catch (Exception e) { finishImport(Texts.importFailed(e.getMessage()), ERROR, null); }
         });

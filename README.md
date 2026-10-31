@@ -23,7 +23,7 @@ It is experimental and unofficial. It works on one game build (3.0.5364, 64-bit 
 
 ### Play
 
-1. Download a mod for the PC game (a ZIP or 7z file) from its author's page.
+1. Download a mod for the PC game (a ZIP, 7z or RAR file) from its author's page.
 2. Open **Titan Quest Mods**, tap **Add a mod from a file** and pick the file from Downloads. The new mod is chosen automatically.
 3. Tap the green **Play: …** button. The first time, the app makes a separate copy of your characters for this mod.
 4. Wait a few seconds in the game's main menu, then open the character list as usual.
@@ -68,7 +68,7 @@ An older development route embeds the same loader as a Frida Gadget in a locally
 
 ### Build and test
 
-Build the module with `python magisk/build.py` and the app with `python tools/build-import-test.py --manager --jdk ... --sdk ... --out ...` (sign it with your own key). Run the host tests with Node.js and a JDK:
+Build the module with `python magisk/build.py` and the app with `python tools/build-import-test.py --manager --jdk ... --sdk ... --out ...` (sign it with your own key). For RAR import, first build the native reader with `python tools/build-rar-native.py --ndk <NDK> --libarchive <unpacked libarchive-3.7.7>`; the app build then packs `libtqrar.so`, and without it RAR files are refused with a message. Run the host tests with Node.js and a JDK:
 
 ```text
 for f in android/tests/*.js; do node "$f"; done
