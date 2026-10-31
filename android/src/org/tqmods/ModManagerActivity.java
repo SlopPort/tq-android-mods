@@ -478,7 +478,8 @@ public final class ModManagerActivity extends Activity {
                     SaveRestore.restore(snapshot, new File(external, "Preferences/SaveData"));
                 } else {
                     // Unpack and check every file here; root then swaps it in and keeps the current characters.
-                    File staging = new File(getCacheDir(), "restore"); deleteTree(staging);
+                    // Canonical path: SaveRestore refuses aliases such as /data/user/0 for /data/data.
+                    File staging = new File(getCacheDir().getCanonicalFile(), "restore"); deleteTree(staging);
                     File saves = new File(staging, "SaveData");
                     if (!saves.mkdirs()) throw new IOException("Cannot prepare restore");
                     SaveRestore.restore(snapshot, saves);

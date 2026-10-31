@@ -41,7 +41,16 @@ Most root actions above were run with the same helper command the app uses, from
 | Play in the app | Game started with Masteries; one injection; loader waiting for the menu |
 | App while the game runs | "… will load when the game shows the character list" and **Return to the game** |
 
-The app's Perf switch, backup and restore were not run on the phone yet.
+Settings in the app (fresh save backup taken first):
+
+| Test | Result |
+| --- | --- |
+| Perf switch off, then on | Creates and removes Perf's `paused` file; left off as before the test |
+| Close the game from the app | Game closed |
+| Save a backup of my characters | ZIP saved to the phone; 1,081 files plus `SHA256SUMS.txt`, identical by SHA-256 to the pre-test backup; staging folder removed |
+| Restore characters from a backup (1.0) | **Failed**: "Existing SaveData directory required". The app's cache path (`/data/user/0/…`) is an alias of `/data/data/…`, and the restore check refuses aliased paths. Nothing was changed |
+| Restore (1.0.1, canonical staging path) | "Characters restored". Previous saves kept in `.SaveData-before-restore-<date>`; 1,081 restored files identical by SHA-256 to the backup; owner `1023:30185` and SELinux context `media_rw_data_file` as before; staging folder removed |
+| Original game after restore | Character list shows the characters |
 
 ## Limits and notes
 

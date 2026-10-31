@@ -34,11 +34,11 @@ classes.mkdir(); dex.mkdir()
 shutil.copyfile(android, a.out / 'android.jar')
 android = a.out / 'android.jar'
 manifest = a.out / 'AndroidManifest.xml'
-package, label, version = (('org.tqmods.manager', 'Titan Quest Mods', '1.0') if a.manager
-                           else ('org.tqmods.importtest', 'TQ Mods Import Test', '0.1'))
+package, label, version, code = (('org.tqmods.manager', 'Titan Quest Mods', '1.0.1', 2) if a.manager
+                                 else ('org.tqmods.importtest', 'TQ Mods Import Test', '0.1', 1))
 icon = ' android:icon="@drawable/icon"' if a.manager else ''
 manifest.write_text(f'''<manifest xmlns:android="http://schemas.android.com/apk/res/android"
- package="{package}" android:versionCode="1" android:versionName="{version}">
+ package="{package}" android:versionCode="{code}" android:versionName="{version}">
  <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="36"/>
  <queries><package android:name="com.hg.titanquestultimate"/></queries>
  <application android:label="{label}"{icon} android:allowBackup="false"
