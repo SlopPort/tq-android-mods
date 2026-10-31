@@ -49,6 +49,7 @@ Version 1.2 keeps a removed mod's characters when the same mod is added again an
 
 ## Known issues
 
+- Masteries from mods can be chosen, but most of their skill icons show as blank frames; the mod's own icon files are not requested by the mobile skill panel ([report](reports/2026-10-31-masteries-coverage.md)).
 - With Perf enabled, labels in the in-game pause menu can be tiny ([investigation](reports/2026-10-29-pause-menu-investigation.md)).
 - A few game values that the game reads before the character list may keep their normal values.
 - Custom-world navigation: see the [single-level experiment](reports/2026-10-30-single-level-navigation.md).

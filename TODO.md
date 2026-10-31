@@ -5,7 +5,7 @@ Updated: 2026-10-31. Goal: a mod loader that a non-technical player can use: add
 ## Roadmap
 
 1. **RAR import** (7z is done in 1.1). The official unRAR source may not be used to build a RAR-compatible archiver, and clean-room decoders need a licence review first.
-2. **Content-mod coverage.** Check new-character mastery selection with Masteries, LootPlus drops after the generic path, Halloween gameplay, and records the engine caches before character selection.
+2. **Content-mod coverage.** New-character mastery selection with Masteries works; its skill icons are blank because the mobile skill panel never requests mod icon files ([report](reports/2026-10-31-masteries-coverage.md)): find where skill icons are resolved. Still to check: LootPlus drops after the generic path, Halloween gameplay, and records the engine caches before character selection.
 3. **Custom worlds.** Turn the single-level navigation rebuild into a bounded load-time step; then generalize the Gladiators adapter to other recognized maps.
 4. **Several mods at once** with a clear conflict report (record and resource overlaps).
 5. **Waiting indicator in game** while a mod activates, instead of explaining only after the game was stopped.
