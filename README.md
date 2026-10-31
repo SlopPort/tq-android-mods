@@ -45,7 +45,7 @@ After changing your choice, always start the game with the app's green button: t
 
 ### Status
 
-Version 1.1 reads 7z mods directly and recognises a mod that is already in the list ([7z report](reports/2026-10-31-7z-import.md)); 1.0.1 fixed restoring characters from a backup ([test report](reports/2026-10-31-magisk-route.md)). It was tested on one rooted Redmi Note 8 (Android 16) with game build 3.0.5364. That phone runs a third-party repack of the game, so a Google Play copy has not been tested yet; [reports are welcome](https://github.com/SlopPort/tq-android-mods/issues). This repository never distributes game APKs, game files or mods.
+Version 1.1 reads 7z mods directly and recognises a mod that is already in the list ([7z report](reports/2026-10-31-7z-import.md)); 1.0.1 fixed restoring characters from a backup ([test report](reports/2026-10-31-magisk-route.md)). It was tested on one rooted Redmi Note 8 (Android 16) with game build 3.0.5364. Other phones and copies of the game were not tested; [problem reports are welcome](https://github.com/SlopPort/tq-android-mods/issues). This repository never distributes game APKs, game files or mods.
 
 ## Known issues
 
