@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.*;
 import org.json.JSONObject;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 /** Two builds: embedded in a locally prepared game APK (shares the game's UID), or the standalone
@@ -28,6 +30,7 @@ public final class ModManagerActivity extends Activity {
     private boolean restartAfterAsking;
     private final android.os.Handler ui = new android.os.Handler(android.os.Looper.getMainLooper());
     private ModStore store;
+    private Combos combos;
     private ImportSnapshot pending;
     private static boolean selectionPending, importPending;
     private boolean ownsOperation, showSettings;
@@ -55,7 +58,7 @@ public final class ModManagerActivity extends Activity {
         scroll = new ScrollView(this); scroll.setBackgroundColor(BG); scroll.setFillViewport(true);
         scroll.addView(root); setContentView(scroll);
         embedded = getPackageName().equals(RootLink.GAME);
-        try { store = new ModStore(new File(getFilesDir(), "tqmods/library")); }
+        try { store = new ModStore(new File(getFilesDir(), "tqmods/library")); combos = new Combos(new File(getFilesDir(), "tqmods/combos")); }
         catch (IOException e) { say(Texts.importFailed(e.getMessage()), ERROR); }
         render();
     }
@@ -114,7 +117,23 @@ public final class ModManagerActivity extends Activity {
         try { return new JSONObject(new String(new AtomicFile(new File(getFilesDir(), "bootstrap-status.json")).readFully(), "UTF-8")); }
         catch (Exception absent) { return null; }
     }
-    private File entry(String id) { return new File(getFilesDir(), "tqmods/library/" + id); }
+    private File entry(String id) {
+        if (combos != null && combos.has(id)) return combos.dir(id);
+        return new File(getFilesDir(), "tqmods/library/" + id);
+    }
+    /** Members of a combination that are still in the library, or null for a single mod. */
+    private List<String> members(String id) {
+        if (combos == null || !combos.has(id)) return null;
+        try { return combos.members(id); } catch (IOException broken) { return new ArrayList<>(); }
+    }
+    private boolean complete(String id) {
+        List<String> m = members(id);
+        if (m == null) return true;
+        if (m.size() < Combos.MIN) return false;
+        for (String x : m) if (!new File(getFilesDir(), "tqmods/library/" + x).isDirectory()) return false;
+        return true;
+    }
+    private static boolean combinable(String kind) { return kind.equals(ModKind.CONTENT) || kind.equals(ModKind.TESTED); }
     private String name(String id) { return id == null ? Texts.vanilla() : ModStore.title(entry(id)); }
     private static boolean same(String a, String b) { return a == null ? b == null : a.equals(b); }
 
@@ -185,6 +204,20 @@ public final class ModManagerActivity extends Activity {
             String hint = kind.equals(ModKind.MAP) ? Texts.hintMap() : kind.equals(ModKind.MAP_SUPPORTED) ? Texts.hintMapSupported() : Texts.hintContent();
             modCard(dir.getName(), ModStore.title(dir), hint + " " + Texts.size(ModStore.size(dir)), badge, dir.getName().equals(selected), busy);
         }
+        File[] sets = combos == null ? new File[0] : combos.all();
+        java.util.Arrays.sort(sets, (a, b) -> ModStore.title(a).compareToIgnoreCase(ModStore.title(b)));
+        for (File dir : sets) {
+            String id = dir.getName();
+            modCard(id, ModStore.title(dir), complete(id) ? Texts.comboHint() : Texts.comboBroken(), Texts.badgeCombo(), id.equals(selected), busy);
+        }
+        List<File> parts = new ArrayList<>();
+        for (File dir : mods) if (combinable(ModKind.of(store, dir))) parts.add(dir);
+        if (parts.size() >= Combos.MIN) {
+            Button combine = button(Texts.combine(), CARD, GOLD, 17);
+            outline(combine, GOLD); combine.setEnabled(!busy);
+            combine.setOnClickListener(v -> chooseCombination(parts));
+            root.addView(combine, wide(dp(56), dp(4), dp(10)));
+        }
 
         Button add = button(Texts.addMod(), CARD, GOLD, 17);
         outline(add, GOLD); add.setEnabled(!busy);
@@ -229,6 +262,7 @@ public final class ModManagerActivity extends Activity {
         card.setOnClickListener(v -> {
             if (busy) return;
             if (id != null && !ModKind.playable(ModKind.of(store, entry(id)))) { say(Texts.unsupportedMap(), WARN); render(); return; }
+            if (id != null && !complete(id)) { say(Texts.comboBroken(), WARN); render(); return; }
             select(id);
         });
         root.addView(card, wide(-2, 0, dp(10)));
@@ -391,8 +425,47 @@ public final class ModManagerActivity extends Activity {
             .setPositiveButton(Texts.remove(), (d, w) -> {
                 boolean wasSelected = id.equals(selectedId());
                 background(() -> {
-                    try { store.retire(entry(id)); done(Texts.removed(), MUTED); } catch (IOException e) { done(e.getMessage(), ERROR); }
+                    try {
+                        if (combos.has(id)) combos.remove(id); else store.retire(entry(id));
+                        done(Texts.removed(), MUTED);
+                    } catch (IOException e) { done(e.getMessage(), ERROR); }
                     if (wasSelected) runOnUiThread(() -> select(null));
+                });
+            }).show();
+    }
+
+    /** Pick mods in the order they should win conflicts, then show which records they share. */
+    private void chooseCombination(List<File> parts) {
+        String[] names = new String[parts.size()];
+        for (int i = 0; i < names.length; i++) names[i] = ModStore.title(parts.get(i));
+        List<Integer> order = new ArrayList<>();
+        new AlertDialog.Builder(this).setTitle(Texts.combineTitle())
+            .setMultiChoiceItems(names, null, (d, which, on) -> { order.remove(Integer.valueOf(which)); if (on) order.add(which); })
+            .setNegativeButton(Texts.cancel(), null)
+            .setPositiveButton(Texts.next(), (d, w) -> {
+                if (order.size() < Combos.MIN || order.size() > Combos.MAX) { say(Texts.combineCount(), WARN); render(); return; }
+                List<File> chosen = new ArrayList<>();
+                for (int i : order) chosen.add(parts.get(i));
+                background(() -> {
+                    String report;
+                    try {
+                        List<java.util.Set<String>> records = new ArrayList<>();
+                        for (File dir : chosen) records.add(Combos.records(store.database(dir)));
+                        StringBuilder text = new StringBuilder(Texts.comboOrder(ModStore.title(chosen.get(0))));
+                        List<int[]> rows = Combos.conflicts(records);
+                        if (rows.isEmpty()) text.append("\n\n").append(Texts.noConflicts());
+                        for (int[] r : rows) text.append("\n\n").append(Texts.conflict(ModStore.title(chosen.get(r[0])), ModStore.title(chosen.get(r[1])), r[2]));
+                        report = text.toString();
+                    } catch (IOException e) { done(e.getMessage(), ERROR); return; }
+                    final String message = report;
+                    done(null, MUTED);
+                    runOnUiThread(() -> new AlertDialog.Builder(this).setTitle(Texts.comboTitle(chosen.size())).setMessage(message)
+                        .setNegativeButton(Texts.cancel(), null)
+                        .setPositiveButton(Texts.createCombo(), (d2, w2) -> {
+                            List<String> ids = new ArrayList<>(); StringBuilder title = new StringBuilder();
+                            for (File dir : chosen) { ids.add(dir.getName()); if (title.length() > 0) title.append(" + "); title.append(ModStore.title(dir)); }
+                            try { select(combos.create(ids, title.toString())); } catch (IOException e) { say(e.getMessage(), ERROR); render(); }
+                        }).show());
                 });
             }).show();
     }
@@ -428,17 +501,38 @@ public final class ModManagerActivity extends Activity {
     private void writeRequest(String id, String target, boolean inGame) throws Exception {
         JSONObject request = new JSONObject(); request.put("schema", 1);
         request.put("id", id == null ? JSONObject.NULL : id);
-        File database = id == null ? null : store.database(entry(id));
-        request.put("database", database == null ? JSONObject.NULL : path(database, inGame));
-        request.put("size", database == null ? 0 : database.length());
-        request.put("name", id == null ? JSONObject.NULL : ModStore.title(entry(id)));
-        request.put("customWorld", id != null && store.customWorld(entry(id)));
-        org.json.JSONArray resources = new org.json.JSONArray();
-        if (id != null) for (File resource : store.resources(entry(id))) {
-            JSONObject item = new JSONObject(); item.put("path", path(resource, inGame));
-            item.put("size", resource.length()); resources.put(item);
+        List<String> parts = id == null ? null : members(id);
+        if (parts != null) {
+            // Combination: the module copies every listed mod; the loader loads them in this order.
+            request.put("database", JSONObject.NULL); request.put("size", 0);
+            request.put("name", ModStore.title(entry(id))); request.put("customWorld", false);
+            request.put("memberIds", android.text.TextUtils.join(",", parts));
+            org.json.JSONArray list = new org.json.JSONArray();
+            for (String m : parts) {
+                File dir = new File(getFilesDir(), "tqmods/library/" + m), database = store.database(dir);
+                JSONObject item = new JSONObject(); item.put("mod", m); item.put("name", ModStore.title(dir));
+                item.put("database", path(database, inGame)); item.put("size", database.length()); item.put("customWorld", store.customWorld(dir));
+                org.json.JSONArray resources = new org.json.JSONArray();
+                for (File resource : store.resources(dir)) {
+                    JSONObject r = new JSONObject(); r.put("path", path(resource, inGame)); r.put("size", resource.length()); resources.put(r);
+                }
+                item.put("resources", resources); list.put(item);
+            }
+            request.put("members", list);
         }
-        request.put("resources", resources);
+        File database = id == null || parts != null ? null : store.database(entry(id));
+        if (parts == null) {
+            request.put("database", database == null ? JSONObject.NULL : path(database, inGame));
+            request.put("size", database == null ? 0 : database.length());
+            request.put("name", id == null ? JSONObject.NULL : ModStore.title(entry(id)));
+            request.put("customWorld", id != null && store.customWorld(entry(id)));
+            org.json.JSONArray resources = new org.json.JSONArray();
+            if (id != null) for (File resource : store.resources(entry(id))) {
+                JSONObject item = new JSONObject(); item.put("path", path(resource, inGame));
+                item.put("size", resource.length()); resources.put(item);
+            }
+            request.put("resources", resources);
+        }
         AtomicFile file = new AtomicFile(new File(getFilesDir(), target));
         FileOutputStream stream = null;
         try {

@@ -48,16 +48,21 @@ launch)
  if running; then [ "$3" = restart ] || fail "game is running"; stop_game; fi
  req="$2/tqmods/request-game.json"
  mkdir -p "$TQ/library" "$TQ/save-profiles"
- id=''
+ id=''; members=''
  [ -f "$req" ] && id=$(sed -n 's/.*"id":"\([^"]*\)".*/\1/p' "$req")
+ # A combination lists its mods as "memberIds":"id,id"; the combination id only names the characters copy.
+ [ -f "$req" ] && members=$(sed -n 's/.*"memberIds":"\([^"]*\)".*/\1/p' "$req" | tr ',' ' ')
  if [ -n "$id" ]; then
   uuid_ok "$id" || fail "bad mod id"
-  src="$2/tqmods/library/$id"
-  [ -d "$src" ] || fail "mod files missing"
-  if [ ! -d "$TQ/library/$id" ]; then
-   rm -rf "$TQ/library/.copy-$id"
-   cp -r "$src" "$TQ/library/.copy-$id" && mv "$TQ/library/.copy-$id" "$TQ/library/$id" || fail "cannot copy the mod"
-  fi
+  for m in ${members:-$id}; do
+   uuid_ok "$m" || fail "bad mod id"
+   src="$2/tqmods/library/$m"
+   [ -d "$src" ] || fail "mod files missing"
+   if [ ! -d "$TQ/library/$m" ]; then
+    rm -rf "$TQ/library/.copy-$m"
+    cp -r "$src" "$TQ/library/.copy-$m" && mv "$TQ/library/.copy-$m" "$TQ/library/$m" || fail "cannot copy the mod"
+   fi
+  done
   if [ ! -d "$TQ/save-profiles/$id" ]; then
    # First start of this mod: an independent copy of the characters. Originals are only read.
    stage="$TQ/save-profiles/.creating-$id-$$"
@@ -72,9 +77,10 @@ launch)
  else
   rm -f "$TQ/request.json"
  fi
- # Keep only the chosen mod's files in the game folder; the app keeps every imported mod.
+ # Keep only the chosen mods' files in the game folder; the app keeps every imported mod.
  for d in "$TQ"/library/*; do
-  n=${d##*/}; uuid_ok "$n" && [ "$n" != "$id" ] && rm -rf "$d"
+  n=${d##*/}; uuid_ok "$n" || continue
+  case " $id $members " in *" $n "*) ;; *) rm -rf "$d";; esac
  done
  own_like "$TQ" "$DATA/files"
  rm -f "$DATA/files/bootstrap-status.json"

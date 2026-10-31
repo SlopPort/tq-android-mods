@@ -1,6 +1,6 @@
 id=tq_mods
 name=Titan Quest Mods loader (unofficial)
-version=1.2
-versionCode=3
+version=1.3
+versionCode=4
 author=Slop Port
 description=Loads PC content mods into your unmodified Titan Quest (Android 3.0.5364, arm64). Use it with the Titan Quest Mods app. Each mod plays on its own copy of your characters. Hosts TQ Android Perf and add-ons in the same single injection. Not affiliated with the game's publisher.

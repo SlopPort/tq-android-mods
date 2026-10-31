@@ -18,4 +18,7 @@ for(const r of [{...request,startupPid:11},{...request,id:'../escape'},{...reque
 for(const invalid of ['/private/../profiles','relative','/private//profiles','/private/profiles/'])
  assert.throws(()=>c.tqResolveSaveProfile(request,12,invalid,live));
 assert.throws(()=>c.tqResolveSaveProfile(request,12,base,base+'/'+id+'/SaveData/'));
-console.log('PASS: current prepared profile, vanilla, stale startup and mismatched/overlapping roots');
+// A combination has no database of its own but still needs its prepared copy.
+assert.equal(c.tqResolveSaveProfile({...request,database:null,members:[{},{}]},12,base,live).id,id);
+assert.throws(()=>c.tqResolveSaveProfile({...request,database:null,members:[{},{}],preparedProfile:undefined},12,base,live),/separate save copy/);
+console.log('PASS: current prepared profile, vanilla, combination, stale startup and mismatched/overlapping roots');

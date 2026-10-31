@@ -4,7 +4,7 @@
 
 It is experimental and unofficial. It works on one game build (3.0.5364, 64-bit phones).
 
-**[Download Titan Quest Mods 1.3](https://github.com/SlopPort/tq-android-mods/releases/latest)**: on the Releases page, scroll to **Assets** and download both files: the app (`titan-quest-mods-1.3.apk`) and the Magisk module (`tq-mods-magisk-1.2.zip`).
+**[Download Titan Quest Mods 1.4](https://github.com/SlopPort/tq-android-mods/releases/latest)**: on the Releases page, scroll to **Assets** and download both files: the app (`titan-quest-mods-1.4.apk`) and the Magisk module (`tq-mods-magisk-1.3.zip`).
 
 > **Requirement: a rooted phone (Magisk) and your own copy of the game.**
 > The Android game cannot load mods by itself: its PC mod-loading code is switched off, and it reads no game content from folders you can reach without root ([evidence](reports/2026-10-31-data-only-mods.md)). Mods therefore need a small loader running inside the game. The only ways to put it there without root are to rebuild the game APK or wrap it in a container app, and both mean defeating the publisher's license protection. **We will not do that.** With Magisk, the loader is put into your game while it runs, so your purchased copy, its files and its signature stay as they are.
@@ -14,8 +14,8 @@ It is experimental and unofficial. It works on one game build (3.0.5364, 64-bit 
 ### Install (once)
 
 1. Install Titan Quest as usual.
-2. Open **Magisk** → **Modules** → **Install from storage** → choose `tq-mods-magisk-1.2.zip`. When it finishes, tap **Reboot**.
-3. Open your Downloads and tap `titan-quest-mods-1.3.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
+2. Open **Magisk** → **Modules** → **Install from storage** → choose `tq-mods-magisk-1.3.zip`. When it finishes, tap **Reboot**.
+3. Open your Downloads and tap `titan-quest-mods-1.4.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
 4. Open **Titan Quest Mods** and tap **Allow root access**. A Magisk window (*Superuser Request*) appears with a countdown: tap **Grant** before it runs out. If you missed it, open Magisk → **Superuser**, switch on Titan Quest Mods and tap the button again.
 5. Make a backup of your characters: **Settings and backups** → **Save a backup of my characters**.
 
@@ -37,7 +37,7 @@ After changing your choice, always start the game with the app's green button: t
 | --- | --- |
 | Items, skills, masteries, balance, loot (normal game world) | **Loaded automatically.** Tested with this release: Masteries 1.03. Tested earlier with the development build: LootPlus 1.3, Halloween 2012 |
 | Custom maps with their own world | **Gladiators only (experimental).** PC maps carry no navigation data for the mobile engine; since module 1.2 the loader has the game build it for each area you enter (about half a second), so the hero can walk ([report](reports/2026-10-31-map-navigation.md)). Other maps: not yet |
-| Several mods at once | Not yet; one mod per game start |
+| Several mods at once | **2 to 8 content mods together** (app 1.4 with module 1.3). The app shows which game records two mods both change; the mod ticked first wins. Tested: Masteries 1.03 + Halloween 2012 ([report](reports/2026-10-31-combinations.md)). Custom maps cannot be combined |
 | 7z downloads | **Read directly** (LZMA, LZMA2, Deflate, uncompressed); password-protected 7z files are not |
 | RAR downloads | Repack as ZIP on a computer; the app says so when you pick one |
 
@@ -45,7 +45,7 @@ After changing your choice, always start the game with the app's green button: t
 
 ### Status
 
-Module 1.2 makes the Gladiators map walkable. App 1.3 shows a message over the game while a mod loads, because the game stands still for a few seconds then ([report](reports/2026-10-31-loading-message.md)); it needs module 1.1 for the exact moment and works with module 1.0. 1.2 keeps a removed mod's characters when the same mod is added again and shows how much space each mod uses. 1.1 reads 7z mods directly and recognises a mod that is already in the list ([7z report](reports/2026-10-31-7z-import.md)); 1.0.1 fixed restoring characters from a backup ([test report](reports/2026-10-31-magisk-route.md)). It was tested on one rooted Redmi Note 8 (Android 16) with game build 3.0.5364. Other phones and copies of the game were not tested; [problem reports are welcome](https://github.com/SlopPort/tq-android-mods/issues). This repository never distributes game APKs, game files or mods.
+App 1.4 with module 1.3 plays several mods together, each set with its own copy of your characters ([report](reports/2026-10-31-combinations.md)). Module 1.2 makes the Gladiators map walkable. App 1.3 shows a message over the game while a mod loads, because the game stands still for a few seconds then ([report](reports/2026-10-31-loading-message.md)); it needs module 1.1 for the exact moment and works with module 1.0. 1.2 keeps a removed mod's characters when the same mod is added again and shows how much space each mod uses. 1.1 reads 7z mods directly and recognises a mod that is already in the list ([7z report](reports/2026-10-31-7z-import.md)); 1.0.1 fixed restoring characters from a backup ([test report](reports/2026-10-31-magisk-route.md)). It was tested on one rooted Redmi Note 8 (Android 16) with game build 3.0.5364. Other phones and copies of the game were not tested; [problem reports are welcome](https://github.com/SlopPort/tq-android-mods/issues). This repository never distributes game APKs, game files or mods.
 
 ## Known issues
 

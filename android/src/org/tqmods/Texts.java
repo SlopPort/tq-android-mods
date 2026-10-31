@@ -73,6 +73,20 @@ final class Texts {
     static String preparingSaves() { return t("Preparing a separate copy of your characters for this mod. This happens only once…",
         "Przygotowuję osobną kopię Twoich postaci dla tego moda. To dzieje się tylko raz…"); }
     static String starting() { return t("Starting the game…", "Uruchamiam grę…"); }
+    static String badgeCombo() { return t("Several mods", "Kilka modów"); }
+    static String comboHint() { return t("Played together, with their own copy of your characters.", "Grane razem, z własną kopią Twoich postaci."); }
+    static String comboBroken() { return t("A mod in this set was removed. Add it again or remove this set.", "Mod z tego zestawu został usunięty. Dodaj go ponownie albo usuń zestaw."); }
+    static String combine() { return t("+  Play several mods together", "+  Graj kilkoma modami naraz"); }
+    static String combineTitle() { return t("Tick the mods in order of importance", "Zaznacz mody od najważniejszego"); }
+    static String combineCount() { return t("Choose 2 to 8 mods.", "Wybierz od 2 do 8 modów."); }
+    static String next() { return t("Next", "Dalej"); }
+    static String comboTitle(int n) { return t(n + " mods together", n + " mody razem"); }
+    static String comboOrder(String first) { return t("If mods change the same thing, the one ticked first wins: " + first + ".",
+        "Jeśli mody zmieniają to samo, wygrywa zaznaczony wcześniej: " + first + "."); }
+    static String noConflicts() { return t("These mods do not change the same game records.", "Te mody nie zmieniają tych samych rekordów gry."); }
+    static String conflict(String a, String b, int n) { return t(a + " and " + b + " both change " + n + " game records; " + a + "'s version is used.",
+        a + " i " + b + " zmieniają te same rekordy gry (" + n + "); użyta zostanie wersja z: " + a + "."); }
+    static String createCombo() { return t("Create", "Utwórz"); }
     static String watchChannel() { return t("Mod loading", "Ładowanie moda"); }
     static String watchMenu() { return t("The mod loads when you open the character list. The game then stands still for about 10 seconds; please wait.",
         "Mod załaduje się po otwarciu listy postaci. Gra stanie wtedy na około 10 sekund – poczekaj."); }

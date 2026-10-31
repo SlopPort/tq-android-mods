@@ -7,9 +7,11 @@ Updated: 2026-10-31. Goal: a mod loader that a non-technical player can use: add
 1. **RAR import** (7z is done in 1.1). The official unRAR source may not be used to build a RAR-compatible archiver, and clean-room decoders need a licence review first.
 2. **Content-mod coverage.** New-character mastery selection with Masteries works; its skill icons are blank because the mobile skill panel never requests mod icon files ([report](reports/2026-10-31-masteries-coverage.md)): find where skill icons are resolved. Still to check: LootPlus drops after the generic path, Halloween gameplay, and records the engine caches before character selection.
 3. **Custom worlds.** Gladiators is walkable since module 1.2 (navigation built per area, [report](reports/2026-10-31-map-navigation.md)). Next: generalize the Gladiators adapter (map path, sentinel records, text tags) to other maps; this needs more map files from their authors to test with. Check enemies and quests inside a map once a map with them is available.
-4. **Several mods at once** with a clear conflict report (record and resource overlaps).
+4. **Several mods at once:** done for content mods (1.4). Still open: report overlapping resource files (textures, sounds) as well as records, and combinations that include a custom map.
 5. **Perf pause-menu labels** regression.
 6. Rename/describe mods in the list, delete a mod's character copy on request (needs a module update).
+
+Done on 2026-10-31 (1.4, module 1.3): 2 to 8 content mods played together; the first-ticked mod wins conflicts, the app counts shared records before creating a set, each set has its own character copy. Checked on the phone with Masteries + Halloween 2012.
 
 Done on 2026-10-31 (module 1.2): Gladiators navigation is built automatically when a character enters an area; walking, save, restart and reload checked on the phone.
 

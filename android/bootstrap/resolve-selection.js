@@ -4,6 +4,20 @@ function tqResolveSelection(text, profiles, libraryRoot, readBytes) {
   const request=JSON.parse(text);
   if(request.schema!==1)throw Error('Unsupported selection schema');
   if(request.id===null && request.database===null)return {status:'vanilla'};
+  if(request.members!==undefined){
+    // Several content mods: each must pass the single-mod checks; maps cannot be combined.
+    if(typeof request.id!=='string' || !/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(request.id))throw Error('Invalid library ID');
+    if(!Array.isArray(request.members)||request.members.length<2||request.members.length>8)throw Error('A combination needs 2 to 8 mods');
+    const ids=new Set(),plans=[];
+    for(const m of request.members){
+      if(!m||typeof m.mod!=='string'||ids.has(m.mod))throw Error('Repeated mod in combination');
+      ids.add(m.mod);
+      const one=tqResolveSelection(JSON.stringify({schema:1,id:m.mod,database:m.database,size:m.size,name:m.name,customWorld:m.customWorld,resources:m.resources}),[],libraryRoot,readBytes);
+      if(one.status!=='content')throw Error(one.reason==='custom-world'?'Custom maps cannot be combined':'Mod in combination is unsupported');
+      plans.push({...one.plan,id:m.mod,name:one.name});
+    }
+    return {status:'combination',id:request.id,name:request.name||'mods',plans};
+  }
   if(typeof request.id!=='string' || !/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(request.id))throw Error('Invalid library ID');
   const roots=Array.isArray(libraryRoot)?libraryRoot:[libraryRoot];
   const contained=typeof request.database==='string' && roots.some(root=>typeof root==='string' && request.database.startsWith(root+'/'+request.id+'/'));

@@ -149,6 +149,13 @@ function tqRegisterModText(engine, fs, gate, held) {
     if (p.isNull()) throw Error('Mod text lock failed');
     try { text = tqDecodeModText(p.readByteArray(n)); } finally { unlock(file); }
   } finally { const pp = Memory.alloc(8); pp.writePointer(file); close(fs, pp); }
+  const rows = tqParseModText(text);
+  tqAddModTextRows(engine, gate, held, rows);
+  return {status: 'registered', file: used, tags: rows.length};
+}
+
+function tqAddModTextRows(engine, gate, held, rows) {
+  const F = (n, r, a) => new NativeFunction(gate.address(engine, n), r, a);
   const loc = engine.getExportByName('_ZN4GAME19LocalizationManager10m_InstanceE').readPointer();
   if (loc.isNull()) throw Error('Missing localization');
   const assignWide = F('_ZNSt6__ndk112basic_stringIwNS_11char_traitsIwEENS_9allocatorIwEEE6assignEPKw', 'pointer', ['pointer', 'pointer']);
@@ -156,7 +163,6 @@ function tqRegisterModText(engine, fs, gate, held) {
   const addWide = F('_ZN4GAME19LocalizationManager11AddTagToMapERNSt6__ndk112basic_stringIwNS1_11char_traitsIwEENS1_9allocatorIwEEEEPKcb', 'void', ['pointer', 'pointer', 'pointer', 'bool']);
   const has = F('_ZN4GAME19LocalizationManager15HasLocalizationEPKc', 'bool', ['pointer', 'pointer']);
   const source = Memory.allocUtf8String('Text/modstrings.txt'); held.push(source);
-  const rows = tqParseModText(text);
   const w = Memory.alloc(24);
   for (const row of rows) {
     const units = Array.from(row.line, c => c.codePointAt(0));
@@ -168,5 +174,83 @@ function tqRegisterModText(engine, fs, gate, held) {
   }
   const registered = rows.length ? has(loc, Memory.allocUtf8String(rows[0].key)) : true;
   if (!registered) throw Error('Mod text not registered');
-  return {status: 'registered', file: used, tags: rows.length};
+}
+
+// Reads Text.arc/modstrings.txt of one mod directly: in the shared file system the first mod's file hides the others.
+function tqReadModTextFromArc(engine, gate, path) {
+  const F = (n, r, a) => new NativeFunction(gate.address(engine, n), r, a);
+  const ctor = F('_ZN4GAME7ArchiveC2Ev', 'void', ['pointer']), dtor = F('_ZN4GAME7ArchiveD2Ev', 'void', ['pointer']);
+  const open = F('_ZN4GAME7Archive4OpenEPKcNS0_8FileModeEb', 'int', ['pointer', 'pointer', 'int', 'bool']);
+  const find = F('_ZNK4GAME7Archive8FindFileEPKc', 'int', ['pointer', 'pointer']);
+  const entry = F('_ZNK4GAME7Archive12GetFileEntryEi', 'pointer', ['pointer', 'int']);
+  const extract = F('_ZNK4GAME7Archive19ExtractFileToMemoryEiPhj', 'int', ['pointer', 'int', 'pointer', 'uint']);
+  const arc = Memory.alloc(0x200);
+  ctor(arc);
+  try {
+    if (!open(arc, Memory.allocUtf8String(path), 1, 0)) throw Error('Could not open mod text archive');
+    for (const name of ['modstrings.txt', 'modStrings.txt', 'ModStrings.txt']) {
+      const i = find(arc, Memory.allocUtf8String(name));
+      if (i < 0) continue;
+      const size = entry(arc, i).add(12).readU32();
+      if (size > 4 * 1024 * 1024) throw Error('Mod text exceeds 4 MiB');
+      const buffer = Memory.alloc(Math.max(1, size));
+      if (size && !extract(arc, i, buffer, size)) throw Error('Could not read mod text');
+      return tqDecodeModText(buffer.readByteArray(size));
+    }
+    return null;
+  } finally { dtor(arc); }
+}
+
+// Several content mods. The first mod in the list wins: its archives are mounted first (the first
+// source wins a lookup), its database is applied last and its text tags are registered last.
+function tqActivateGenericMods(engine, archive, player, plans, gate, onReport) {
+  const report = {schema: 1, kind: 'combination', status: 'preflight', mods: plans.map(p => ({name: p.name, mounts: []}))};
+  const save = () => onReport(report);
+  const held = []; globalThis.__tqGenericHeld = held;
+  if (!player.isNull() || archive.isNull()) throw Error('Requires menu without player');
+  if (plans.length < 2 || plans.length > 8) throw Error('A combination needs 2 to 8 mods');
+  const F = (n, r, a) => new NativeFunction(gate.address(engine, n), r, a);
+  const assign = F('_ZNSt6__ndk112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE6assignEPKc', 'pointer', ['pointer', 'pointer']);
+  const str = s => { const p = Memory.alloc(24), t = Memory.allocUtf8String(s); p.writeByteArray(new Uint8Array(24)); assign(p, t); held.push(p, t); return p; };
+  const index = F('_ZN4GAME15DatabaseArchive24GetRecordIndexFromStringERKNSt6__ndk112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEE', 'int', ['pointer', 'pointer']);
+  const data = plans.map(p => File.readAllBytes(p.database));
+  const summaries = data.map(d => tqArzSummary(d, 16));
+  summaries.forEach((s, i) => { report.mods[i].records = s.count; });
+
+  const fs = F('_ZN4GAME6Engine13GetFileSystemEv', 'pointer', ['pointer'])(engine.getExportByName('_ZN4GAME7gEngineE').readPointer());
+  if (fs.isNull()) throw Error('No FileSystem');
+  if (fs.add(16).readPointer().sub(fs.add(8).readPointer()).toInt32() !== 0) throw Error('Resource group 0 occupied');
+  const add = F('_ZN4GAME10FileSystem16AddSourceArchiveERKNS0_22AddSourceArchiveParamsE', 'int', ['pointer', 'pointer']);
+  plans.forEach((plan, i) => {
+    for (const item of plan.resources) {
+      const options = Memory.alloc(0x30); held.push(options);
+      options.add(8).writePointer(str(item.path));
+      const result = add(fs, options);
+      report.mods[i].mounts.push({name: item.path.slice(plan.root.length), result}); save();
+      if (result !== 1) throw Error('Could not open mod resource ' + item.path.slice(plan.root.length));
+    }
+  });
+  for (let i = plans.length - 1; i >= 0; i--) {
+    const textArc = plans[i].resources.find(r => r.path.slice(r.path.lastIndexOf('/') + 1).toLowerCase() === 'text.arc');
+    const text = textArc ? tqReadModTextFromArc(engine, gate, textArc.path) : null;
+    if (text === null) { report.mods[i].text = {status: 'none'}; continue; }
+    const rows = tqParseModText(text);
+    tqAddModTextRows(engine, gate, held, rows);
+    report.mods[i].text = {status: 'registered', tags: rows.length}; save();
+  }
+
+  report.status = 'loading-database'; save();
+  const deserialize = F('_ZN4GAME15DatabaseArchive11DeserializeEPKvjb', 'void', ['pointer', 'pointer', 'uint', 'bool']);
+  for (let i = plans.length - 1; i >= 0; i--) {
+    const buffer = Memory.alloc(data[i].byteLength); buffer.writeByteArray(data[i]); held.push(buffer);
+    deserialize(archive, buffer, data[i].byteLength, 0);
+  }
+  // Every mod's records must still be there after the others were applied.
+  summaries.forEach((s, i) => {
+    const missing = s.names.filter(name => index(archive, str(name)) < 0);
+    report.mods[i].sampled = s.names.length; report.mods[i].missing = missing.length;
+    if (missing.length) throw Error('Mod records not found after loading: ' + missing[0]);
+  });
+  report.status = 'content-loaded'; save();
+  return report;
 }

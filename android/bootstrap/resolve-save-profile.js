@@ -7,7 +7,8 @@ function tqResolveSaveProfile(request, pid, profilesRoot, liveRoot) {
   if (request.id === null && request.database === null) return null;
   if (typeof request.id !== 'string' || !/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(request.id))
     throw Error('Invalid profile selection');
-  if (typeof request.database !== 'string' || request.database.length === 0)
+  // A combination has no database of its own; its mods are listed in members.
+  if (!Array.isArray(request.members) && (typeof request.database !== 'string' || request.database.length === 0))
     throw Error('Selected mod database missing');
   const roots=Array.isArray(profilesRoot)?profilesRoot:[profilesRoot];
   if(!roots.length || roots.some(root=>typeof root !== 'string' || !root.startsWith('/') ||

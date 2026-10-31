@@ -18,11 +18,11 @@ rpc.exports.init = function(stage, parameters) {
     report.late=late;
     if(request.startupPid!==Process.id)throw Error('Selection belongs to another startup');
     const selection=tqResolveSelection(text,parameters.profiles,parameters.libraryRoot,p=>File.readAllBytes(p));
-    if(!['vanilla','recognized','content','map-preflight-verified'].includes(selection.status))
+    if(!['vanilla','recognized','content','combination','map-preflight-verified'].includes(selection.status))
       throw Error(selection.reason==='custom-world'?'Custom maps are not supported yet':'Selected mod is unsupported');
     report.menuProbe={selection:{status:selection.status,id:selection.id,name:selection.name}};
     const profile=tqResolveSaveProfile(request,Process.id,parameters.profilesRoot,parameters.liveSaveRoot);
-    const isMap=selection.status==='map-preflight-verified',isContent=selection.status==='content';
+    const isMap=selection.status==='map-preflight-verified',isContent=selection.status==='content'||selection.status==='combination';
     let perfStarted=false;
     const startPerf=()=>{
       if(request.perfEnabled!==true||perfStarted)return;
@@ -72,7 +72,8 @@ rpc.exports.init = function(stage, parameters) {
           if(parameters.navApi)held.push(tqInstallMapNavigation(engine,gate,r=>{report.menuProbe.navigation=r;write();}));
           report.modsActivated=true;
         }else if(isContent){
-          report.menuProbe.content=tqActivateGenericMod(engine,archive,player,selection.plan,gate,r=>{report.menuProbe.content=r;write();});
+          report.menuProbe.content=selection.plans?tqActivateGenericMods(engine,archive,player,selection.plans,gate,r=>{report.menuProbe.content=r;write();})
+            :tqActivateGenericMod(engine,archive,player,selection.plan,gate,r=>{report.menuProbe.content=r;write();});
           report.modsActivated=true;
         }else if(selection.status==='recognized'){
           report.menuProbe.database=tqLabDatabaseProbe(engine,archive,selection.config);

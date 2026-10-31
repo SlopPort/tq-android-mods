@@ -4,9 +4,9 @@ You need a 64-bit phone with root (Magisk) and Titan Quest installed (game build
 
 ## Install (once)
 
-1. Open the [Releases page](https://github.com/SlopPort/tq-android-mods/releases/latest), scroll to **Assets** and download `tq-mods-magisk-1.2.zip` and `titan-quest-mods-1.3.apk`.
-2. Open **Magisk** → **Modules** → **Install from storage** → choose `tq-mods-magisk-1.2.zip`. When it finishes, tap **Reboot**. In Magisk the module is called **Titan Quest Mods loader**.
-3. Open your Downloads and tap `titan-quest-mods-1.3.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
+1. Open the [Releases page](https://github.com/SlopPort/tq-android-mods/releases/latest), scroll to **Assets** and download `tq-mods-magisk-1.3.zip` and `titan-quest-mods-1.4.apk`.
+2. Open **Magisk** → **Modules** → **Install from storage** → choose `tq-mods-magisk-1.3.zip`. When it finishes, tap **Reboot**. In Magisk the module is called **Titan Quest Mods loader**.
+3. Open your Downloads and tap `titan-quest-mods-1.4.apk`. If Android says installing from this source is blocked, tap **Settings**, switch on **Allow from this source**, go back and tap **Install**. If Play Protect warns about an unknown app, choose to install anyway.
 4. Open **Titan Quest Mods** and tap **Allow root access** (*Zezwól na dostęp roota*). A Magisk window (*Superuser Request*) appears with a countdown and two buttons: tap **Grant** (*Zezwól*) before the countdown runs out.
 
 If the Magisk window closed by itself, Magisk remembers that as a refusal. Open **Magisk** → **Superuser**, switch on **Titan Quest Mods**, then tap **Allow root access** in the app again.
@@ -32,6 +32,16 @@ Your original characters are not used by mods. Progress made with a mod stays wi
 
 After changing your choice, start the game with the app's green button. The game's own icon starts whatever you played last.
 
+## Play several mods together
+
+When the list has at least two mods with a normal game world, the button **+ Play several mods together** (*+ Graj kilkoma modami naraz*) appears under them.
+
+1. Tap it and tick 2 to 8 mods, **the most important first**. The order matters: when two mods change the same thing, the one ticked earlier wins.
+2. Tap **Next** (*Dalej*). The app compares the mods and says which ones change the same game records and whose version is used, or that they do not overlap.
+3. Tap **Create** (*Utwórz*). The set appears in the list with the label **Several mods** (*Kilka modów*) and is chosen. Tap the green **Play: …** button as for a single mod.
+
+A set has its own copy of your characters, separate from the copies of its mods. Custom maps (such as Gladiators) cannot be put in a set. If you remove a mod that a set uses, the set says so and cannot be played until you add that mod again or remove the set. Removing a set does not remove its mods. Sets need module 1.3.
+
 ## Go back to the original game
 
 Open **Titan Quest Mods**, tap **Original game (no mods)** (*Oryginalna gra (bez modów)*), then the green **Play: Original game** button.
@@ -45,6 +55,7 @@ If the game is still running, the green button says **Restart the game with: …
 | Tested (*Sprawdzony*) | This exact mod file has been checked on a phone |
 | Experimental (*Eksperymentalny*) | The app will load it; not every feature of the mod has been checked |
 | Custom map – not supported yet | The mod has its own world, which cannot be played on Android yet |
+| Several mods (*Kilka modów*) | A set of mods played together, with its own copy of your characters |
 | Custom map with its own characters | A recognised map (Gladiators). Your characters for it are a separate copy. When a character enters the map, the game stops for about half a second while the loader prepares the paths the hero walks on |
 
 ## Settings and backups
@@ -61,7 +72,7 @@ The top of the app shows one sentence about what happened. When the loader stops
 
 | Message | What to do |
 | --- | --- |
-| The Titan Quest Mods loader module is not installed | Install `tq-mods-magisk-1.2.zip` in Magisk and reboot |
+| The Titan Quest Mods loader module is not installed | Install `tq-mods-magisk-1.3.zip` in Magisk and reboot |
 | Root access was refused | Open Magisk → Superuser, switch on Titan Quest Mods, tap **Allow root access** again |
 | Titan Quest is not installed on this phone | Install the game, or update the Magisk module to the latest release |
 | Mods are paused: update … | Update TQ Android Perf or TQ Traders, then reboot |
