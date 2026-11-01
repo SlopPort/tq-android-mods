@@ -7,7 +7,7 @@
   setInterval(flush, 1000);
   let factor = 0;
   try { factor = parseFloat(File.readAllText('/data/data/com.hg.titanquestultimate/files/tqmods/enemies.txt').trim()); } catch (e) {}
-  if (!(factor > 0 && factor <= 4)) { lines.push('off'); return; }
+  if (!(factor >= 1 && factor <= 4)) { lines.push('off'); return; }
   const m = Process.getModuleByName('libtq.so');
   const run = m.getExportByName('_ZN4GAME9ProxyPool7RunPoolEi');
   // Two read sites inside RunPool (normal and second pool block): s0 = max modifier, s9 = min modifier.
@@ -17,10 +17,15 @@
     const at = run.add(off);
     if (at.readU32() !== 0xbd401261 && at.readU32() !== 0xbd401a61) { lines.push('unexpected code at +' + off.toString(16) + ' ' + at.readU32().toString(16)); continue; }
     Interceptor.attach(at, function () {
+      if (factor === 1) return;
       const c = this.context, mn = c.s9, mx = c.s0;
       c.s9 = scale(mn); c.s0 = scale(mx);
       if (n++ < 30) lines.push('pool +' + off.toString(16) + ' min ' + mn + '->' + c.s9 + ' max ' + mx + '->' + c.s0);
     });
   }
+  let pools = 0, sumMin = 0, sumMax = 0;
+  Interceptor.attach(run, { onEnter(a) { this.p = a[0]; }, onLeave() {
+    const mn = this.p.add(0x10).readU32(), mx = this.p.add(0x14).readU32(); pools++; sumMin += mn; sumMax += mx;
+    lines.push('RUN ' + pools + ' min ' + mn + ' max ' + mx + ' totals ' + sumMin + '/' + sumMax); } });
   lines.push('enemies x' + factor + ' ready');
 })();
