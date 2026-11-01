@@ -41,7 +41,7 @@ After changing your choice, always start the game with the app's green button: t
 | Custom maps with their own world | **Gladiators only (experimental).** PC maps carry no navigation data for the mobile engine; since module 1.2 the loader has the game build it for each area you enter (about half a second), so the hero can walk ([report](reports/2026-10-31-map-navigation.md)). Other maps: not yet |
 | Several mods at once | **2 to 8 content mods together** (app 1.4 with module 1.3). The app shows which game records two mods both change; the mod ticked first wins. Tested: Masteries 1.03 + Halloween 2012 ([report](reports/2026-10-31-combinations.md)). Custom maps cannot be combined |
 | 7z downloads | **Read directly** (LZMA, LZMA2, Deflate, uncompressed); password-protected 7z files are not |
-| RAR downloads | Repack as ZIP on a computer; the app says so when you pick one |
+| RAR downloads | **Read directly** (RAR4, RAR5) since app 1.6; not split or password-protected RAR files, not on 32-bit phones |
 
 "Loaded" means the mod's files were opened by the game and its data was found. It does not mean every part of a mod was played through. Evidence: [generic content mods](reports/2026-10-31-generic-content-mods.md), [LootPlus profile](reports/2026-10-28-lootplus-profile-background.md), [map roundtrip](reports/2026-10-28-integrated-profile-loader.md).
 
@@ -49,12 +49,19 @@ After changing your choice, always start the game with the app's green button: t
 
 App 1.7 with module 1.5 adds the **More enemies** option. App 1.6 (module 1.4) reads RAR mods, lets you rename mods and add your own description, and lists files two mods in a set both ship. App 1.5 with module 1.4 can delete a mod's copy of your characters to start that mod over. App 1.4 with module 1.3 plays several mods together, each set with its own copy of your characters ([report](reports/2026-10-31-combinations.md)). Module 1.2 makes the Gladiators map walkable. App 1.3 shows a message over the game while a mod loads, because the game stands still for a few seconds then ([report](reports/2026-10-31-loading-message.md)); it needs module 1.1 for the exact moment and works with module 1.0. 1.2 keeps a removed mod's characters when the same mod is added again and shows how much space each mod uses. 1.1 reads 7z mods directly and recognises a mod that is already in the list ([7z report](reports/2026-10-31-7z-import.md)); 1.0.1 fixed restoring characters from a backup ([test report](reports/2026-10-31-magisk-route.md)). It was tested on one rooted Redmi Note 8 (Android 16) with game build 3.0.5364. Other phones and copies of the game were not tested; [problem reports are welcome](https://github.com/SlopPort/tq-android-mods/issues). This repository never distributes game APKs, game files or mods.
 
-## Known issues
+## What does not work
 
-- Masteries from mods can be chosen, but most of their skill icons show as blank frames; the mod's own icon files are not requested by the mobile skill panel ([report](reports/2026-10-31-masteries-coverage.md)).
+Things below were tested on the phone and do **not** work, or cannot work with this loader. They are listed so you know before you download a mod.
+
+- **New masteries (for example Masteries 1.03): blank skill icons.** The new classes can be chosen, levelled and played, but in the skill tree almost every skill shows an empty frame. On the test phone this also happened to standard masteries picked inside such a mod. The phone's skill panel does not ask for the mod's icon pictures at all; re-reading the mod's records after it loads was tried and does not help ([report](reports/2026-11-01-masteries-icons.md), [coverage](reports/2026-10-31-masteries-coverage.md)). There is no fix yet. You play these classes "blind": hold a skill to read its name and description.
+- **Mods that change the game's global settings have no effect.** The game reads its main settings record (monster group sizes, global difficulty, inventory size and similar) when it starts, before any mod is loaded. Mods such as XMAX that only change this record therefore do nothing ([report](reports/2026-10-31-xmax-x2.md)). Loading that record later is not safe either: the PC version lacks phone-only values, and it set the inventory bag size to zero in a test ([report](reports/2026-11-01-early-activation.md)). For more monsters use the built-in **More enemies** option instead.
+- **More enemies** multiplies monster groups. Single placed monsters (bosses, quest monsters) are not multiplied. More monsters also mean a lower frame rate on slow phones.
+- **Custom maps:** only Gladiators works (experimental). Other PC maps do not load, and maps cannot be combined with other mods.
+- **Archives:** password-protected ZIP, 7z or RAR files and RAR files split into several parts are refused. RAR needs a 64-bit ARM phone.
+- **Game version:** only game build 3.0.5364 on 64-bit phones. On another build the loader refuses to load mods and More enemies stays off.
+- **No root, no mods.** Without Magisk the loader cannot run (see the box at the top).
 - With Perf enabled, labels in the in-game pause menu can be tiny ([investigation](reports/2026-10-29-pause-menu-investigation.md)).
-- A few game values that the game reads before the character list may keep their normal values.
-- Custom-world navigation: see the [single-level experiment](reports/2026-10-30-single-level-navigation.md).
+- A few other game values that the game reads before the character list may keep their normal values, for the same reason as the global settings above.
 
 ## Developers
 
