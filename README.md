@@ -29,6 +29,8 @@ It is experimental and unofficial. It works on one game build (3.0.5364, 64-bit 
 4. Wait a few seconds in the game's main menu, then open the character list as usual.
 5. To go back, tap **Original game (no mods)** and the green button. If the game is running, the app reminds you to save and restarts it for you.
 
+**More enemies** (app 1.7 with module 1.5): in **Settings and backups**, tap **More enemies** to choose off, x1.5, x2 or x3. Every monster group then spawns that many times more members; it works with any mod and with the original game, and takes effect at the next game start. It changes no game files: the loader scales the game's own two spawn settings while the game runs. Measured: x2 doubled every group (for example 3–4 monsters became 7–9) ([report](reports/2026-11-01-more-enemies.md)).
+
 After changing your choice, always start the game with the app's green button: the game's own icon starts whatever you played last. The app is in Polish on Polish phones and in English everywhere else. Step-by-step guide with all messages: [USAGE.md](USAGE.md).
 
 ### Which mods work?

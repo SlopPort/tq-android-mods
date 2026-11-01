@@ -52,7 +52,7 @@ if a.enable_supported_databases or a.enable_profile_lab:
 if a.enable_profile_lab:
     names = ['resolve-selection.js', 'lab-database-probe.js', 'plan-save-path.js',
         'resolve-save-profile.js', 'preflight-native-api.js', 'save-profile-runtime.js', 'local-only-cloud.js',
-        'observe-engine-startup.js', 'gladiators-map-runtime.js', 'profile-loader.js']
+        'observe-engine-startup.js', 'gladiators-map-runtime.js', 'more-enemies.js', 'profile-loader.js']
     script = b'\n'.join((root / 'android/bootstrap' / name).read_bytes() for name in names)
     parameters.update(
         profilesRoot=['/data/user/0/com.hg.titanquestultimate/files/tqmods/save-profiles',

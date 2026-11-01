@@ -39,6 +39,12 @@ final class Texts {
     static String perf() { return t("Faster graphics (Perf)", "Szybsza grafika (Perf)"); }
     static String perfHint() { return t("Engine optimizations and an in-game graphics menu. Takes effect the next time the game starts. Known issue: tiny labels in the pause menu.",
         "Optymalizacje silnika i menu grafiki w grze. Działa od następnego uruchomienia gry. Znany problem: bardzo małe napisy w menu pauzy."); }
+    static String enemies(int percent) {
+        String v = percent == 100 ? t("off", "wył.") : "x" + (percent % 100 == 0 ? String.valueOf(percent / 100) : String.valueOf(percent / 100.0));
+        return t("More enemies: ", "Więcej przeciwników: ") + v;
+    }
+    static String enemiesHint() { return t("Tap to change. Each monster group spawns that many times more members. Applies to areas loaded after the game starts; works with any mod.",
+        "Dotknij, aby zmienić. Każda grupa potworów ma tyle razy więcej członków. Działa w obszarach wczytanych po starcie gry, z każdym modem."); }
     static String backup() { return t("Save a backup of my characters", "Zapisz kopię zapasową postaci"); }
     static String restore() { return t("Restore characters from a backup", "Przywróć postacie z kopii"); }
     static String shortcut() { return t("Put this app on the Home screen", "Dodaj tę aplikację na ekran główny"); }

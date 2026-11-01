@@ -48,6 +48,7 @@ rpc.exports.init = function(stage, parameters) {
       if(isMap&&parameters.navApi)groups.push(parameters.navApi);
       const gate=tqPreflightNativeApi(engine,groups.map(g=>g.map(a=>({...a,rva:Number(a.rva)}))));
       report.apiPreflight={status:'matched',count:gate.count};
+      try{report.enemies=tqStartEnemies(engine,request.enemies);}catch(e){report.enemies={requested:true,status:'error',error:String(e)};}
       const E=n=>engine.getExportByName(n);
       const fn=(n,r,a)=>new NativeFunction(gate.address(engine,n),r,a);
       const getArchive=fn('_ZN4GAME6Engine18GetDatabaseArchiveEv','pointer',['pointer']);

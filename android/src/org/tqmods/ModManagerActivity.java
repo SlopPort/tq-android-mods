@@ -304,6 +304,16 @@ public final class ModManagerActivity extends Activity {
         }
         box.addView(perf);
         TextView ph = label("absent".equals(perfState) ? Texts.perfMissing() : Texts.perfHint(), 13, MUTED, false); ph.setPadding(0, 0, 0, dp(10)); box.addView(ph);
+        int enemies = 100;
+        try { enemies = RuntimeFeatures.enemies(getFilesDir()); } catch (Exception error) { android.util.Log.w("tqmods", "feature settings", error); }
+        final int current = enemies;
+        settingButton(box, Texts.enemies(current), busy || running, v -> {
+            int[] steps = RuntimeFeatures.ENEMIES; int next = steps[0];
+            for (int i = 0; i < steps.length; i++) if (steps[i] == current) next = steps[(i + 1) % steps.length];
+            try { RuntimeFeatures.setEnemies(getFilesDir(), next); } catch (Exception error) { say(error.getMessage(), ERROR); render(); return; }
+            select(selectedId()); // rewrites the startup request with the new factor
+        });
+        TextView eh = label(Texts.enemiesHint(), 13, MUTED, false); eh.setPadding(0, dp(4), 0, dp(10)); box.addView(eh);
         {
             settingButton(box, Texts.backup(), busy, v -> {
                 if (!stopped()) return;
@@ -553,6 +563,7 @@ public final class ModManagerActivity extends Activity {
     private void writeRequest(String id, String target, boolean inGame) throws Exception {
         JSONObject request = new JSONObject(); request.put("schema", 1);
         request.put("id", id == null ? JSONObject.NULL : id);
+        request.put("enemies", RuntimeFeatures.enemies(getFilesDir()));
         List<String> parts = id == null ? null : members(id);
         if (parts != null) {
             // Combination: the module copies every listed mod; the loader loads them in this order.

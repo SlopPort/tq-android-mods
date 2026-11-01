@@ -17,7 +17,7 @@ FILES = ['module.prop', 'customize.sh', 'service.sh', 'tqmods.sh', 'action.sh', 
 # Order matters: helpers first, the orchestrator (which sets rpc.exports.init) last.
 SCRIPTS = ['resolve-selection.js', 'lab-database-probe.js', 'plan-save-path.js', 'resolve-save-profile.js',
            'magisk-request.js', 'preflight-native-api.js', 'save-profile-runtime.js', 'local-only-cloud.js',
-           'observe-engine-startup.js', 'gladiators-map-runtime.js', 'map-navigation-runtime.js', 'generic-mod-runtime.js', 'profile-loader.js']
+           'observe-engine-startup.js', 'gladiators-map-runtime.js', 'map-navigation-runtime.js', 'generic-mod-runtime.js', 'more-enemies.js', 'profile-loader.js']
 GAME = '/data/user/0/com.hg.titanquestultimate/files'
 ALIAS = '/data/data/com.hg.titanquestultimate/files'
 
@@ -53,7 +53,7 @@ def loader():
 
 ap = argparse.ArgumentParser()
 ap.add_argument('--injector', help='existing frida-inject binary for android-arm64')
-ap.add_argument('--out', default=str(HERE.parent / 'dist' / 'tq-mods-magisk-1.4.zip'))
+ap.add_argument('--out', default=str(HERE.parent / 'dist' / 'tq-mods-magisk-1.5.zip'))
 a = ap.parse_args()
 inj = pathlib.Path(a.injector).read_bytes() if a.injector else lzma.decompress(urllib.request.urlopen(URL).read())
 out = pathlib.Path(a.out)
